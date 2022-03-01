@@ -1,0 +1,28 @@
+cabal-version:      2.4
+name:               trajans
+version:            0.1.0.0
+synopsis:           Generate skeletons for text set in Trajan capitals
+-- description:
+bug-reports:        https://github.com/edsko/trajans/issues
+license:            BSD-3-Clause
+author:             Edsko de Vries
+maintainer:         edsko@well-typed.com
+copyright:          Edsko de Vries
+category:           Graphics
+
+extra-source-files:
+  CHANGELOG.md
+  README.md
+
+executable trajans
+  main-is:
+      Main.hs
+  hs-source-dirs:
+      app
+  default-language:
+      Haskell2010
+  ghc-options:
+      -Wall
+  other-modules:
+  build-depends:
+      base
