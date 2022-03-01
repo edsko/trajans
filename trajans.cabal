@@ -21,8 +21,26 @@ executable trajans
       app
   default-language:
       Haskell2010
+  default-extensions:
+      FlexibleContexts
+      ImportQualifiedPost
+      LambdaCase
+      NoMonomorphismRestriction
+      RankNTypes
+      RecordWildCards
+      TypeFamilies
+      ViewPatterns
   ghc-options:
       -Wall
+      -Wprepositive-qualified-module
   other-modules:
+      Trajans.Alphabet
+      Trajans.Grid
+      Trajans.Letter
+      Trajans.Trajan
+      Trajans.Util.Diagrams
   build-depends:
       base
+    , containers
+    , diagrams-lib
+    , diagrams-svg
