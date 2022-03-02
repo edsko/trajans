@@ -1,5 +1,6 @@
 module Main (main) where
 
+import Data.Char (toUpper)
 import Data.Foldable (asum)
 import Data.List (intersperse)
 import Options.Applicative
@@ -10,14 +11,17 @@ import Diagrams.Prelude
 
 import Trajans.Grid
 import Trajans.Letter
+import Trajans.Text
 import Trajans.Trajan
 import Trajans.Util.Diagrams
+import Data.Maybe (mapMaybe)
 
 main :: IO ()
 main = mainWith (growBoundingBox (r2 (1, 1)) . execRenderCommand)
 
 execRenderCommand :: RenderCommand -> Diagram B
-execRenderCommand RenderAlphabet = renderAlphabet
+execRenderCommand RenderAlphabet   = renderAlphabet
+execRenderCommand (RenderText a t) = renderText a t
 
 {-------------------------------------------------------------------------------
   Command line arguments
@@ -25,7 +29,7 @@ execRenderCommand RenderAlphabet = renderAlphabet
 
 data RenderCommand =
     RenderAlphabet
-  | RenderText String (Maybe Alignment)
+  | RenderText (Maybe Alignment) String
   deriving (Show)
 
 data Alignment =
@@ -45,11 +49,11 @@ instance Parseable RenderCommand where
                     long "render"
                   , help "Render text"
                   ])
+          <*> optional parseAlignment
           <*> ( strOption $ mconcat [
                     long "text"
                   , help "Text to render"
                   ])
-          <*> optional parseAlignment
       ]
 
 parseAlignment :: Parser Alignment
@@ -81,17 +85,30 @@ renderAlphabet = vcat $ intersperse (strutY 1) [
     , hcat $ intersperse (strutX 1) $ map renderLetter "UVWXY"
     , hcat $ intersperse (strutX 1) $ map renderLetter "Z"
     ]
-
-renderLetter :: Char -> Diagram B
-renderLetter c = mconcat [
-      strokeLetter l # lc blue # lw medium
-    , fromVertices [ p2 (letterOffset + fst letterBounds, -1)
-                   , p2 (letterOffset + fst letterBounds, 11)
-                   ] # lc red
-    , fromVertices [ p2 (letterOffset + snd letterBounds, -1)
-                   , p2 (letterOffset + snd letterBounds, 11)
-                   ] # lc red
-    , grid
-    ]
   where
-   l@Letter{..} = trajan c
+    renderLetter :: Char -> Diagram B
+    renderLetter c = mconcat [
+          strokeLetter l # lc blue # lw medium
+        , fromVertices [ p2 (letterOffset + fst letterBounds, -1)
+                       , p2 (letterOffset + fst letterBounds, 11)
+                       ] # lc red
+        , fromVertices [ p2 (letterOffset + snd letterBounds, -1)
+                       , p2 (letterOffset + snd letterBounds, 11)
+                       ] # lc red
+        , grid
+        ]
+      where
+       l@Letter{..} = trajan c
+
+{-------------------------------------------------------------------------------
+  Rendering text
+-------------------------------------------------------------------------------}
+
+renderText :: Maybe Alignment -> String -> Diagram B
+renderText _ma =
+      vcat
+    . intersperse (strutY 2)
+    . map renderLine
+    . mapMaybe constructLine
+    . lines
+    . map toUpper

@@ -24,10 +24,13 @@ executable trajans
   default-extensions:
       FlexibleContexts
       ImportQualifiedPost
+      InstanceSigs
       LambdaCase
+      NamedFieldPuns
       NoMonomorphismRestriction
       RankNTypes
       RecordWildCards
+      ScopedTypeVariables
       TypeFamilies
       ViewPatterns
   ghc-options:
@@ -37,11 +40,14 @@ executable trajans
       Trajans.Alphabet
       Trajans.Grid
       Trajans.Letter
+      Trajans.Text
       Trajans.Trajan
+      Trajans.Util.Alternate
       Trajans.Util.Diagrams
   build-depends:
       base
     , containers
     , diagrams-lib
     , diagrams-svg
+    , mtl
     , optparse-applicative

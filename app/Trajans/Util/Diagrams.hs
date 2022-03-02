@@ -7,7 +7,7 @@ module Trajans.Util.Diagrams (
   , illustrateBezier
   ) where
 
-import Diagrams.Backend.SVG.CmdLine
+import Diagrams.Backend.SVG
 import Diagrams.Prelude
 import Diagrams.TwoD.Combinators
 

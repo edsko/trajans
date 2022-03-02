@@ -1,6 +1,6 @@
 module Trajans.Grid (grid) where
 
-import Diagrams.Backend.SVG.CmdLine
+import Diagrams.Backend.SVG
 import Diagrams.Prelude
 
 import Trajans.Util.Diagrams

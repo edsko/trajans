@@ -1,6 +1,7 @@
 module Trajans.Letter (
     -- * Letter definition
     Letter(..)
+  , letterWidth
   , strokeLetter
   , debugLetter
     -- * Strokes
@@ -13,7 +14,7 @@ module Trajans.Letter (
   ) where
 
 import Data.Functor.Const
-import Diagrams.Backend.SVG.CmdLine
+import Diagrams.Backend.SVG
 import Diagrams.Prelude hiding (Const(..), Empty, Start, End, arcLength)
 
 import Trajans.Util.Diagrams
@@ -36,6 +37,13 @@ data Letter = Letter {
       -- | The lines of the letter, relative to 'letterOffset'
     , letterStrokes :: forall f. Strokes f
     }
+
+instance Show Letter where
+  show Letter{letterName} = show letterName
+
+-- | The distance between the 'letterBounds'
+letterWidth :: Letter -> Double
+letterWidth Letter{letterBounds = (x, x')} = x' - x
 
 letterPath :: Letter -> Path V2 Double
 letterPath Letter{..} =
