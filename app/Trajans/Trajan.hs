@@ -193,15 +193,35 @@ trajan = mkAlphabet [
               , 0 `StraightRightTo` End   topCircle
               ]
         }
-    , Letter {
+    , let flatten = 0.95
+      in Letter {
           letterName    = 'Q'
-        , letterOffset  = 0
-        , letterStrokes = mconcat [] -- TODO
+        , letterOffset  = 5
+        , letterStrokes =
+            Let (Arc $ MkArc (0, 5) 5 (0, 1) 1 (flatten, 1)) $ \oh ->
+            Let (Diagonal (-2, 2) (6, -2)) $ \longTail ->
+            mconcat [
+                Var oh
+              , Between (Intersection oh longTail) (End longTail)
+              ]
         }
-    , Letter {
+    , let topWidth  = 5.0
+          topHeight = 5.5
+          topRadius = topHeight / 2
+          flatten   = 0.95
+      in Letter {
           letterName    = 'R'
-        , letterOffset  = 0
-        , letterStrokes = mconcat [] -- TODO
+        , letterOffset  = 1
+        , letterStrokes =
+            Let (rightHalfCircle (topWidth - topRadius * flatten, 10 - topRadius) topRadius flatten) $ \topCircle ->
+            Let (Diagonal (0, 10) (7, 0)) $ \longLeg ->
+            mconcat [
+                basic $ Vertical (0, 10) 10
+              , Var topCircle
+              , 0 `StraightRightTo` Start topCircle
+              , 0 `StraightRightTo` End   topCircle
+              , Between (Intersection topCircle longLeg) (End longLeg)
+              ]
         }
     , let botOffset = 0.35
           midOffset = 0.21 -- how far is the inflection point above the center?
