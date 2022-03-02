@@ -30,6 +30,9 @@ data Letter = Letter {
       -- | The offset from the left margin of the letter
     , letterOffset :: Double
 
+      -- | The bounds of the letter for spacing, relative to 'letterOffset'
+    , letterBounds :: (Double, Double)
+
       -- | The lines of the letter, relative to 'letterOffset'
     , letterStrokes :: forall f. Strokes f
     }
