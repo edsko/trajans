@@ -11,7 +11,7 @@ import Trajans.Trajan
 import Trajans.Util.Diagrams
 
 main :: IO ()
-main = mainWith $ growBoundingBox (r2 (2, 1)) $ vcat $ intersperse (strutY 1) [
+main = mainWith $ growBoundingBox (r2 (1, 1)) $ vcat $ intersperse (strutY 1) [
       hcat $ intersperse (strutX 1) $ map renderLetter "ABCDE"
     , hcat $ intersperse (strutX 1) $ map renderLetter "FGHJK"
     , hcat $ intersperse (strutX 1) $ map renderLetter "LMNOP"
@@ -22,4 +22,3 @@ main = mainWith $ growBoundingBox (r2 (2, 1)) $ vcat $ intersperse (strutY 1) [
 
 renderLetter :: Char -> Diagram B
 renderLetter c = (strokeLetter (trajan c) # lc blue # lw medium) <> grid
-

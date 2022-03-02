@@ -9,9 +9,9 @@ import Trajans.Letter
 
 type Alphabet = Char -> Letter
 
-mkAlphabet :: [Spec] -> Alphabet
+mkAlphabet :: [Letter] -> Alphabet
 mkAlphabet = (Map.!) . Map.fromList . map aux
   where
-    aux :: Spec -> (Char, Letter)
-    aux spec = (specLetter spec, mkLetter spec)
+    aux :: Letter -> (Char, Letter)
+    aux l = (letterName l, l)
 

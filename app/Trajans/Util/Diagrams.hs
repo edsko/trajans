@@ -62,11 +62,11 @@ illustrateBezier c1 c2 x2 =
     <> ctrlpt # translate c2
     <> l1
     <> l2
-    <> fromSegments [bézier3 c1 c2 x2]
+    <> (strokePath (fromSegments [bézier3 c1 c2 x2]) # lc purple)
   where
     dashed  = dashingN [0.03,0.03] 0
-    endpt   = circle 0.05 # fc red  # lw none
-    ctrlpt  = circle 0.05 # fc blue # lw none
+    endpt   = circle 0.1 # fc red  # lw none
+    ctrlpt  = circle 0.1 # fc blue # lw none
     l1      = fromOffsets [c1] # dashed
     l2      = fromOffsets [x2 ^-^ c2] # translate c2 # dashed
 

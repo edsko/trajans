@@ -7,10 +7,10 @@ import Trajans.Letter
 trajan :: Alphabet
 trajan = mkAlphabet [
       let width = 8.5
-      in Spec {
-          specLetter  = 'A'
-        , specOffset  = 5
-        , specStrokes =
+      in Letter {
+          letterName    = 'A'
+        , letterOffset  = 5
+        , letterStrokes =
             Let (Diagonal (0, 10) (0 - width / 2, 0)) $ \leftLeg ->
             Let (Diagonal (0, 10) (0 + width / 2, 0)) $ \rightLeg ->
             Let (Horizontal (-5, 4) 10) $ \fullCrossBar ->
@@ -27,10 +27,10 @@ trajan = mkAlphabet [
           botHeight = 10 - topHeight
           botRadius = botHeight / 2
           flatten   = 0.95
-      in Spec {
-          specLetter  = 'B'
-        , specOffset  = 1
-        , specStrokes =
+      in Letter {
+          letterName    = 'B'
+        , letterOffset  = 1
+        , letterStrokes =
             Let (rightHalfCircle (topWidth - topRadius * flatten, 10 - topRadius) topRadius flatten) $ \topCircle ->
             Let (rightHalfCircle (botWidth - botRadius * flatten,  0 + botRadius) botRadius flatten) $ \botCircle ->
             mconcat [
@@ -43,10 +43,10 @@ trajan = mkAlphabet [
               ]
         }
     , let flatten = 0.95
-      in Spec {
-          specLetter  = 'C'
-        , specOffset  = 5
-        , specStrokes =
+      in Letter {
+          letterName    = 'C'
+        , letterOffset  = 5
+        , letterStrokes =
             mconcat [
                 basic $ leftHalfCircle (0, 5) 5 flatten
               , basic $ Arc $ MkArc (0, 9.5) 5 (0, 1) (-0.25) (0.8, 0.1)
@@ -54,10 +54,10 @@ trajan = mkAlphabet [
               ]
         }
     , let flatten = 0.95
-      in Spec {
-          specLetter  = 'D'
-        , specOffset  = 1
-        , specStrokes =
+      in Letter {
+          letterName    = 'D'
+        , letterOffset  = 1
+        , letterStrokes =
             mconcat [
                 basic $ Vertical        (0, 10) 10
               , basic $ Horizontal      (0, 10)  4
@@ -65,10 +65,10 @@ trajan = mkAlphabet [
               , basic $ rightHalfCircle (4,  5)  5 flatten
               ]
         }
-    , Spec {
-          specLetter  = 'E'
-        , specOffset  = 1
-        , specStrokes =
+    , Letter {
+          letterName    = 'E'
+        , letterOffset  = 1
+        , letterStrokes =
             mconcat [
                 basic $ Vertical   (0, 10) 10.0
               , basic $ Horizontal (0, 10)  4.0
@@ -76,10 +76,10 @@ trajan = mkAlphabet [
               , basic $ Horizontal (0,  0)  4.2
               ]
         }
-    , Spec {
-          specLetter  = 'F'
-        , specOffset  = 1
-        , specStrokes =
+    , Letter {
+          letterName    = 'F'
+        , letterOffset  = 1
+        , letterStrokes =
             mconcat [
                 basic $ Vertical   (0, 10) 10.0
               , basic $ Horizontal (0, 10)  4.0
@@ -87,10 +87,10 @@ trajan = mkAlphabet [
               ]
         }
     , let flatten = 0.95
-      in Spec {
-          specLetter  = 'G'
-        , specOffset  = 5
-        , specStrokes =
+      in Letter {
+          letterName    = 'G'
+        , letterOffset  = 5
+        , letterStrokes =
             Let (Arc $ MkArc (0, 0.5) 5 (0, -1) 0.25 (0.8, 0.1)) $ \bottomArc ->
             mconcat [
                 basic $ leftHalfCircle (0, 5) 5 flatten
@@ -99,29 +99,29 @@ trajan = mkAlphabet [
               , 5 `StraightDownTo` End bottomArc
               ]
         }
-    , Spec {
-          specLetter  = 'H'
-        , specOffset  = 1
-        , specStrokes =
+    , Letter {
+          letterName    = 'H'
+        , letterOffset  = 1
+        , letterStrokes =
             mconcat [
                 basic $ Vertical   (0, 10) 10
               , basic $ Vertical   (8, 10) 10
               , basic $ Horizontal (0,  5)  8
               ]
         }
-    , Spec {
-          specLetter  = 'I'
-        , specOffset  = 1
-        , specStrokes =
+    , Letter {
+          letterName    = 'I'
+        , letterOffset  = 1
+        , letterStrokes =
             mconcat [
                 basic $ Vertical (0, 10) 10
               ]
         }
     , let botRadius = 2.5
-      in Spec {
-          specLetter  = 'J'
-        , specOffset  = 9
-        , specStrokes =
+      in Letter {
+          letterName    = 'J'
+        , letterOffset  = 9
+        , letterStrokes =
             Let (Arc $ MkArc (-1 * botRadius, botRadius) botRadius (1, 0) (-0.25) (1, 1)) $ \botArc ->
             mconcat [
                 10 `StraightDownTo` Start botArc
@@ -129,28 +129,28 @@ trajan = mkAlphabet [
               , basic $ Arc $ MkArc (-2.5, 0.5) 5 (0, -1) (-0.25) (2 / 5, 0.1)
               ]
         }
-    , Spec {
-          specLetter  = 'K'
-        , specOffset  = 1
-        , specStrokes = mconcat [
+    , Letter {
+          letterName    = 'K'
+        , letterOffset  = 1
+        , letterStrokes = mconcat [
               basic $ Vertical (0, 10) 10
             , basic $ Diagonal (0.25, 5.25) (4.5, 10)
             , basic $ Diagonal (0.25, 5.25) (6.5,  0)
             ]
         }
-    , Spec {
-          specLetter  = 'L'
-        , specOffset  = 1
-        , specStrokes =
+    , Letter {
+          letterName    = 'L'
+        , letterOffset  = 1
+        , letterStrokes =
             mconcat [
                 basic $ Vertical   (0, 10) 10.0
               , basic $ Horizontal (0,  0)  4.5
               ]
         }
-    , Spec {
-          specLetter  = 'M'
-        , specOffset  = 0
-        , specStrokes =
+    , Letter {
+          letterName    = 'M'
+        , letterOffset  = 0
+        , letterStrokes =
             mconcat [
                 basic $ Diagonal (-0.5,  0   ) ( 0.5, 10.25)
               , basic $ Diagonal ( 0.5, 10   ) ( 5.0, -0.25)
@@ -158,10 +158,10 @@ trajan = mkAlphabet [
               , basic $ Diagonal ( 9.5, 10.25) (10.5,  0   )
               ]
         }
-    , Spec {
-          specLetter  = 'N'
-        , specOffset  = 1
-        , specStrokes =
+    , Letter {
+          letterName    = 'N'
+        , letterOffset  = 1
+        , letterStrokes =
             mconcat [
                 basic $ Vertical (0, 10.25) 10.25
               , basic $ Vertical (9, 10.25) 10.25
@@ -169,10 +169,10 @@ trajan = mkAlphabet [
               ]
         }
     , let flatten = 0.95
-      in Spec {
-          specLetter  = 'O'
-        , specOffset  = 5
-        , specStrokes =
+      in Letter {
+          letterName    = 'O'
+        , letterOffset  = 5
+        , letterStrokes =
             mconcat [
                 basic $ Arc $ MkArc (0, 5) 5 (0, 1) 1 (flatten, 1)
               ]
@@ -181,10 +181,10 @@ trajan = mkAlphabet [
           topHeight = 5.5
           topRadius = topHeight / 2
           flatten   = 0.95
-      in Spec {
-          specLetter  = 'P'
-        , specOffset  = 1
-        , specStrokes =
+      in Letter {
+          letterName    = 'P'
+        , letterOffset  = 1
+        , letterStrokes =
             Let (rightHalfCircle (topWidth - topRadius * flatten, 10 - topRadius) topRadius flatten) $ \topCircle ->
             mconcat [
                 basic $ Vertical (0, 10) 10
@@ -193,34 +193,47 @@ trajan = mkAlphabet [
               , 0 `StraightRightTo` End   topCircle
               ]
         }
-    , Spec {
-          specLetter  = 'Q'
-        , specOffset  = 0
-        , specStrokes = mconcat [] -- TODO
+    , Letter {
+          letterName    = 'Q'
+        , letterOffset  = 0
+        , letterStrokes = mconcat [] -- TODO
         }
-    , Spec {
-          specLetter  = 'R'
-        , specOffset  = 0
-        , specStrokes = mconcat [] -- TODO
+    , Letter {
+          letterName    = 'R'
+        , letterOffset  = 0
+        , letterStrokes = mconcat [] -- TODO
         }
-    , Spec {
-          specLetter  = 'S'
-        , specOffset  = 0
-        , specStrokes = mconcat [] -- TODO
+    , let botOffset = 0.35
+          midOffset = 0.21 -- how far is the inflection point above the center?
+      in Letter {
+          letterName    = 'S'
+        , letterOffset  = 1
+        , letterStrokes =
+            mconcat [
+                basic $ DoubleCurve $ MkDoubleCurve {
+                    doubleCurveStart       = (0   ,  0 + botOffset)
+                  , doubleCurveMid         = (2.5 ,  5 + midOffset)
+                  , doubleCurveFinish      = (5   , 10 - botOffset)
+                  , doubleCurveControlEnds = (5.35, -1.7)
+                  , doubleCurveControlMid  = (4.1, -1.4)
+                  , doubleCurveScale1      = (1, 1)
+                  , doubleCurveScale2      = (0.95, 1)
+                  }
+              ]
         }
-    , Spec {
-          specLetter  = 'T'
-        , specOffset  = 1
-        , specStrokes =
+    , Letter {
+          letterName    = 'T'
+        , letterOffset  = 1
+        , letterStrokes =
             mconcat [
                 basic $ Vertical   (4, 10) 10
               , basic $ Horizontal (0, 10)  8
               ]
         }
-    , Spec {
-          specLetter  = 'U'
-        , specOffset  = 5
-        , specStrokes =
+    , Letter {
+          letterName    = 'U'
+        , letterOffset  = 5
+        , letterStrokes =
             Let (Arc $ MkArc (0, 3) 4 (-1, 0) 0.5 (1, 3 / 4)) $ \bottomArc ->
             mconcat [
                 Var bottomArc
@@ -229,20 +242,20 @@ trajan = mkAlphabet [
               ]
         }
     , let width = 8.4
-      in Spec {
-          specLetter  = 'V'
-        , specOffset  = 5
-        , specStrokes =
+      in Letter {
+          letterName    = 'V'
+        , letterOffset  = 5
+        , letterStrokes =
             mconcat [
                 basic $ Diagonal (0, -0.25) (-1 * width / 2, 10)
               , basic $ Diagonal (0, -0.25) ( 1 * width / 2, 10)
               ]
         }
     , let width = 7
-      in Spec {
-          specLetter  = 'W'
-        , specOffset  = -2
-        , specStrokes =
+      in Letter {
+          letterName    = 'W'
+        , letterOffset  = -2
+        , letterStrokes =
             mconcat [
                 basic $ Diagonal (0.0 * width, 10.00) (0.5 * width, -0.25)
               , basic $ Diagonal (0.5 * width, -0.25) (1.0 * width, 10.25)
@@ -252,20 +265,20 @@ trajan = mkAlphabet [
         }
     , let topWidth = 5.5
           botWidth = 6.5
-      in Spec {
-          specLetter  = 'X'
-        , specOffset  = 5
-        , specStrokes =
+      in Letter {
+          letterName    = 'X'
+        , letterOffset  = 5
+        , letterStrokes =
             mconcat [
                 basic $ Diagonal (-0.5 * topWidth, 10) ( 0.5 * botWidth, 0)
               , basic $ Diagonal ( 0.5 * topWidth, 10) (-0.5 * botWidth, 0)
               ]
         }
     , let width = 7
-      in Spec {
-          specLetter  = 'Y'
-        , specOffset  = 5
-        , specStrokes =
+      in Letter {
+          letterName    = 'Y'
+        , letterOffset  = 5
+        , letterStrokes =
             mconcat [
                 basic $ Diagonal (-0.5 * width, 10) (0, 5)
               , basic $ Diagonal ( 0.5 * width, 10) (0, 5)
@@ -274,10 +287,10 @@ trajan = mkAlphabet [
         }
     , let topWidth = 7.7
           botWidth = 8
-      in Spec {
-          specLetter  = 'Z'
-        , specOffset  = 9
-        , specStrokes =
+      in Letter {
+          letterName    = 'Z'
+        , letterOffset  = 9
+        , letterStrokes =
             Let (Horizontal (-1 * topWidth, 10) topWidth) $ \top ->
             Let (Horizontal (-1 * botWidth,  0) botWidth) $ \bot ->
             mconcat [
