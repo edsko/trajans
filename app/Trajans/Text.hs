@@ -1,6 +1,7 @@
 module Trajans.Text (
     Line(..)
   , Space(..)
+  , Alignment(..)
   , constructLine
   , renderLine
   ) where
@@ -53,9 +54,14 @@ data WithOffset a = WithOffset a Double
 renderWithOffset :: (a -> Diagram B) -> (WithOffset a) -> Diagram B
 renderWithOffset f (WithOffset a x) = f a # translateX x
 
-computeOffsets :: Line -> Alternate (WithOffset Letter) (WithOffset Space)
+-- | Compute offsets of all letters and spaces
+--
+-- Additionally returns the total width of the line (within the bounds)
+computeOffsets ::
+     Line
+  -> (Alternate (WithOffset Letter) (WithOffset Space), Double)
 computeOffsets (Line l) =
-    flip evalState initCursorPosition $
+    flip runState initCursorPosition $
       Alt.traverse onLetter onSpace l
   where
     initCursorPosition :: Double
@@ -70,26 +76,38 @@ computeOffsets (Line l) =
     advanceBy :: (a -> Double) -> a -> State Double (WithOffset a)
     advanceBy f x = state $ \cursor -> (x `WithOffset` cursor, cursor + f x)
 
-renderLine :: Line -> Diagram B
-renderLine =
-      uncurry atop  -- We are careful to position the letter atop the spaces
+data Alignment =
+    AlignLeft
+  | AlignCenter
+  | AlignRight
+  deriving (Show)
+
+renderLine :: Alignment -> Line -> Diagram B
+renderLine a line =
+      shiftOrigin a
+    . uncurry atop  -- We are careful to position the letter atop the spaces
     . bimap (foldMap (renderWithOffset renderLetter))
             (foldMap (renderWithOffset renderSpace))
     . Alt.partition
-    . computeOffsets
+    $ withOffsets
   where
+    (withOffsets, totalWidth) = computeOffsets line
+
+    shiftOrigin :: Alignment -> Diagram B -> Diagram B
+    shiftOrigin AlignLeft   = id
+    shiftOrigin AlignCenter = translateX (-0.5 * totalWidth)
+    shiftOrigin AlignRight  = translateX (-1.0 * totalWidth)
+
     renderLetter :: Letter -> Diagram B
     renderLetter l =
         strokeLetter l
           # translateX (-1 * (fst (letterBounds l) + letterOffset l))
-          # showOrigin
 
     renderSpace :: Space -> Diagram B
     renderSpace s =
         (alignBL $ rect (spacing s) 10)
           # lw none
           # fc (spaceColor s)
-          # showOrigin
 
     spaceColor :: Space -> Colour Double
     spaceColor InterLetter = pink

@@ -14,7 +14,7 @@ import Trajans.Letter
 import Trajans.Text
 import Trajans.Trajan
 import Trajans.Util.Diagrams
-import Data.Maybe (mapMaybe)
+import Data.Maybe (mapMaybe, fromMaybe)
 
 main :: IO ()
 main = mainWith (growBoundingBox (r2 (1, 1)) . execRenderCommand)
@@ -30,12 +30,6 @@ execRenderCommand (RenderText a t) = renderText a t
 data RenderCommand =
     RenderAlphabet
   | RenderText (Maybe Alignment) String
-  deriving (Show)
-
-data Alignment =
-    AlignLeft
-  | AlignCenter
-  | AlignRight
   deriving (Show)
 
 instance Parseable RenderCommand where
@@ -62,12 +56,12 @@ parseAlignment = asum [
           long "left"
         , help "Align left"
         ]
-    , flag' AlignLeft $ mconcat [
+    , flag' AlignCenter $ mconcat [
           long "center"
         , help "Align centered"
         ]
-    , flag' AlignLeft $ mconcat [
-          long "left"
+    , flag' AlignRight $ mconcat [
+          long "right"
         , help "Align right"
         ]
     ]
@@ -105,11 +99,11 @@ renderAlphabet = vcat $ intersperse (strutY 1) [
 -------------------------------------------------------------------------------}
 
 renderText :: Maybe Alignment -> String -> Diagram B
-renderText _ma =
+renderText ma =
       mconcat
     . map (uncurry translateY)
     . zip [0, 0 - interLineSpacing ..]
-    . map renderLine
+    . map (renderLine (fromMaybe AlignLeft ma))
     . mapMaybe constructLine
     . lines
     . map toUpper
