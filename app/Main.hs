@@ -58,11 +58,16 @@ parseRenderOptions =
                long "grid"
              , help "Render a grid"
              ])
+      <*> (switch $ mconcat [
+               long "rulers"
+             , help "Render line rulers"
+             ])
   where
-    renderOptions :: Maybe Alignment -> Bool -> RenderOptions
-    renderOptions ma grid = RenderOptions {
+    renderOptions :: Maybe Alignment -> Bool -> Bool -> RenderOptions
+    renderOptions ma grid rulers = RenderOptions {
          renderAlignment = fromMaybe AlignLeft ma
        , renderGrid      = grid
+       , renderRulers    = rulers
        }
 
 parseAlignment :: Parser Alignment

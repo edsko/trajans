@@ -21,7 +21,6 @@ import Trajans.Trajan
 import Trajans.Util.Alternate (Alternate)
 import Trajans.Util.Alternate qualified as Alt
 import Trajans.Grid
-import Debug.Trace (traceShow)
 
 {-------------------------------------------------------------------------------
   Line of text
@@ -88,12 +87,14 @@ data Alignment =
 data RenderOptions = RenderOptions {
       renderAlignment :: Alignment
     , renderGrid      :: Bool
+    , renderRulers    :: Bool
     }
   deriving (Show)
 
 renderLine :: RenderOptions -> Line -> Diagram B
-renderLine opts@RenderOptions{..} line = traceShow opts $
+renderLine RenderOptions{..} line =
       shiftOrigin renderAlignment
+    . (if renderRulers then addRulers else id)
     . uncurry atop  -- We are careful to position the letter atop the spaces
     . bimap (foldMap (renderWithOffset renderLetter))
             (foldMap (renderWithOffset renderSpace))
@@ -128,6 +129,13 @@ renderLine opts@RenderOptions{..} line = traceShow opts $
     spaceColor :: Space -> Colour Double
     spaceColor InterLetter = pink
     spaceColor InterWord   = lightblue
+
+    addRulers :: Diagram B -> Diagram B
+    addRulers l = mconcat [
+          strokePath (fromVertices [p2 (0, 10), p2 (totalWidth, 10)]) # lw thin
+        , l
+        , strokePath (fromVertices [p2 (0,  0), p2 (totalWidth,  0)]) # lw thin
+        ]
 
 {-------------------------------------------------------------------------------
   Sanitize user input

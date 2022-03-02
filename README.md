@@ -21,6 +21,20 @@ This gets you something like
 
 (`--left` and `--center` alignment are also supported).
 
+The `--rulers` option can be used to add line rulers:
+
+```
+  cabal run trajans -- \
+    -o sphinx.svg \
+    -w 800 \
+    --render \
+    --text $'Sphinx of black\nquartz judge my\nvow' \
+    --left \
+    --rulers
+```
+
+![](sphinx.png)
+
 Optionally a grid can be shown underneath every character and spacer, although
 the result is probably not useful for most use cases:
 
