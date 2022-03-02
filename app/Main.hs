@@ -54,10 +54,15 @@ parseRenderOptions :: Parser RenderOptions
 parseRenderOptions =
     renderOptions
       <$> optional parseAlignment
+      <*> (switch $ mconcat [
+               long "grid"
+             , help "Render a grid"
+             ])
   where
-    renderOptions :: Maybe Alignment -> RenderOptions
-    renderOptions ma = RenderOptions {
+    renderOptions :: Maybe Alignment -> Bool -> RenderOptions
+    renderOptions ma grid = RenderOptions {
          renderAlignment = fromMaybe AlignLeft ma
+       , renderGrid      = grid
        }
 
 parseAlignment :: Parser Alignment
@@ -99,7 +104,7 @@ renderAlphabet = vcat $ intersperse (strutY 1) [
         , fromVertices [ p2 (letterOffset + snd letterBounds, -1)
                        , p2 (letterOffset + snd letterBounds, 11)
                        ] # lc red
-        , grid
+        , gridOfWidth 10 True
         ]
       where
        l@Letter{..} = trajan c

@@ -1,22 +1,30 @@
-module Trajans.Grid (grid) where
+module Trajans.Grid (gridOfWidth) where
 
 import Diagrams.Backend.SVG
-import Diagrams.Prelude
+import Diagrams.Prelude hiding (width)
 
 import Trajans.Util.Diagrams
 
-grid :: Diagram B
-grid = strokePath gridPath # lw veryThin
+gridOfWidth :: Int -> Bool -> Diagram B
+gridOfWidth width renderCircle = mconcat [
+      strokePath (gridPath width) # lw veryThin
+    , if renderCircle
+        then strokePath gridCircle # lw veryThin
+        else mempty
+    ]
 
-gridPath :: Path V2 Double
-gridPath = gridLines <> gridCircle
+gridPath :: Int -> Path V2 Double
+gridPath width = gridLines width
 
 gridCircle :: Path V2 Double
 gridCircle = circle 5 # translate (r2 (5, 5))
 
-gridLines :: Path V2 Double
-gridLines = Path $ map mkLocTrail (horizontal ++ vertical)
+gridLines :: Int -> Path V2 Double
+gridLines width = Path $ map mkLocTrail (horizontal ++ vertical)
   where
     horizontal, vertical :: [[Point V2 Double]]
-    horizontal = [[p2 (0, i), p2 (10, i)] | i <- [0 .. 10]]
-    vertical   = [[p2 (i, 0), p2 (i, 10)] | i <- [0 .. 10]]
+    horizontal = [[p2 (0, d i), p2 (d width, d i)] | i <- [0 .. 10   ]]
+    vertical   = [[p2 (d i, 0), p2 (d i    , 10 )] | i <- [0 .. width]]
+
+    d :: Int -> Double
+    d = fromIntegral

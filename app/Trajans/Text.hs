@@ -20,6 +20,8 @@ import Trajans.Letter
 import Trajans.Trajan
 import Trajans.Util.Alternate (Alternate)
 import Trajans.Util.Alternate qualified as Alt
+import Trajans.Grid
+import Debug.Trace (traceShow)
 
 {-------------------------------------------------------------------------------
   Line of text
@@ -33,7 +35,7 @@ data Space =
   | InterWord
   deriving (Show)
 
-spacing :: Space -> Double
+spacing :: Space -> Int
 spacing InterLetter = 5
 spacing InterWord   = 9
 
@@ -72,7 +74,7 @@ computeOffsets (Line l) =
     onLetter = advanceBy letterWidth
 
     onSpace :: Letter -> Space -> Letter -> State Double (WithOffset Space)
-    onSpace _ s _ = advanceBy spacing s
+    onSpace _ s _ = advanceBy (fromIntegral . spacing) s
 
     advanceBy :: (a -> Double) -> a -> State Double (WithOffset a)
     advanceBy f x = state $ \cursor -> (x `WithOffset` cursor, cursor + f x)
@@ -85,11 +87,12 @@ data Alignment =
 
 data RenderOptions = RenderOptions {
       renderAlignment :: Alignment
+    , renderGrid      :: Bool
     }
   deriving (Show)
 
 renderLine :: RenderOptions -> Line -> Diagram B
-renderLine RenderOptions{..} line =
+renderLine opts@RenderOptions{..} line = traceShow opts $
       shiftOrigin renderAlignment
     . uncurry atop  -- We are careful to position the letter atop the spaces
     . bimap (foldMap (renderWithOffset renderLetter))
@@ -105,15 +108,22 @@ renderLine RenderOptions{..} line =
     shiftOrigin AlignRight  = translateX (-1.0 * totalWidth)
 
     renderLetter :: Letter -> Diagram B
-    renderLetter l =
-        strokeLetter l
-          # translateX (-1 * (fst (letterBounds l) + letterOffset l))
+    renderLetter l = mconcat [
+          strokeLetter l
+        , if renderGrid
+            then gridOfWidth 10 True
+            else mempty
+        ] # translateX (-1 * (fst (letterBounds l) + letterOffset l))
 
     renderSpace :: Space -> Diagram B
-    renderSpace s =
-        (alignBL $ rect (spacing s) 10)
-          # lw none
-          # fc (spaceColor s)
+    renderSpace s = mconcat [
+          if renderGrid
+            then gridOfWidth (spacing s) False
+            else mempty
+        , (alignBL $ rect (fromIntegral (spacing s)) 10)
+            # lw none
+            # fc (spaceColor s)
+        ]
 
     spaceColor :: Space -> Colour Double
     spaceColor InterLetter = pink
