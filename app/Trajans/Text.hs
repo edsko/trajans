@@ -132,9 +132,9 @@ renderLine RenderOptions{..} line =
 
     addRulers :: Diagram B -> Diagram B
     addRulers l = mconcat [
-          strokePath (fromVertices [p2 (0, 10), p2 (totalWidth, 10)]) # lw thin
+          strokePath (fromVertices [p2 (-5, 10), p2 (totalWidth + 5, 10)]) # lw thin
         , l
-        , strokePath (fromVertices [p2 (0,  0), p2 (totalWidth,  0)]) # lw thin
+        , strokePath (fromVertices [p2 (-5,  0), p2 (totalWidth + 5,  0)]) # lw thin
         ]
 
 {-------------------------------------------------------------------------------
