@@ -106,9 +106,13 @@ renderAlphabet = vcat $ intersperse (strutY 1) [
 
 renderText :: Maybe Alignment -> String -> Diagram B
 renderText _ma =
-      vcat
-    . intersperse (strutY 2)
+      mconcat
+    . map (uncurry translateY)
+    . zip [0, 0 - interLineSpacing ..]
     . map renderLine
     . mapMaybe constructLine
     . lines
     . map toUpper
+  where
+    interLineSpacing :: Double
+    interLineSpacing = 13
