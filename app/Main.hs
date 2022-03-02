@@ -20,8 +20,8 @@ main :: IO ()
 main = mainWith (growBoundingBox (r2 (1, 1)) . execRenderCommand)
 
 execRenderCommand :: RenderCommand -> Diagram B
-execRenderCommand RenderAlphabet   = renderAlphabet
-execRenderCommand (RenderText a t) = renderText a t
+execRenderCommand RenderAlphabet      = renderAlphabet
+execRenderCommand (RenderText opts t) = renderText opts t
 
 {-------------------------------------------------------------------------------
   Command line arguments
@@ -29,7 +29,7 @@ execRenderCommand (RenderText a t) = renderText a t
 
 data RenderCommand =
     RenderAlphabet
-  | RenderText (Maybe Alignment) String
+  | RenderText RenderOptions String
   deriving (Show)
 
 instance Parseable RenderCommand where
@@ -43,12 +43,22 @@ instance Parseable RenderCommand where
                     long "render"
                   , help "Render text"
                   ])
-          <*> optional parseAlignment
+          <*> parseRenderOptions
           <*> ( strOption $ mconcat [
                     long "text"
                   , help "Text to render"
                   ])
       ]
+
+parseRenderOptions :: Parser RenderOptions
+parseRenderOptions =
+    renderOptions
+      <$> optional parseAlignment
+  where
+    renderOptions :: Maybe Alignment -> RenderOptions
+    renderOptions ma = RenderOptions {
+         renderAlignment = fromMaybe AlignLeft ma
+       }
 
 parseAlignment :: Parser Alignment
 parseAlignment = asum [
@@ -98,12 +108,12 @@ renderAlphabet = vcat $ intersperse (strutY 1) [
   Rendering text
 -------------------------------------------------------------------------------}
 
-renderText :: Maybe Alignment -> String -> Diagram B
-renderText ma =
+renderText :: RenderOptions -> String -> Diagram B
+renderText opts =
       mconcat
     . map (uncurry translateY)
     . zip [0, 0 - interLineSpacing ..]
-    . map (renderLine (fromMaybe AlignLeft ma))
+    . map (renderLine opts)
     . mapMaybe constructLine
     . lines
     . map toUpper

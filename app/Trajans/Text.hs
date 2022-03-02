@@ -2,6 +2,7 @@ module Trajans.Text (
     Line(..)
   , Space(..)
   , Alignment(..)
+  , RenderOptions(..)
   , constructLine
   , renderLine
   ) where
@@ -82,9 +83,14 @@ data Alignment =
   | AlignRight
   deriving (Show)
 
-renderLine :: Alignment -> Line -> Diagram B
-renderLine a line =
-      shiftOrigin a
+data RenderOptions = RenderOptions {
+      renderAlignment :: Alignment
+    }
+  deriving (Show)
+
+renderLine :: RenderOptions -> Line -> Diagram B
+renderLine RenderOptions{..} line =
+      shiftOrigin renderAlignment
     . uncurry atop  -- We are careful to position the letter atop the spaces
     . bimap (foldMap (renderWithOffset renderLetter))
             (foldMap (renderWithOffset renderSpace))
