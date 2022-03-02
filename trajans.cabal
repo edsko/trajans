@@ -44,3 +44,4 @@ executable trajans
     , containers
     , diagrams-lib
     , diagrams-svg
+    , optparse-applicative
