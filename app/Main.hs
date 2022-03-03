@@ -62,12 +62,17 @@ parseRenderOptions =
                long "rulers"
              , help "Render line rulers"
              ])
+      <*> (flag True False $ mconcat [
+               long "no-spaces"
+             , help "Don't highlight spaces"
+             ])
   where
-    renderOptions :: Maybe Alignment -> Bool -> Bool -> RenderOptions
-    renderOptions ma grid rulers = RenderOptions {
+    renderOptions :: Maybe Alignment -> Bool -> Bool -> Bool -> RenderOptions
+    renderOptions ma grid rulers spaces = RenderOptions {
          renderAlignment = fromMaybe AlignLeft ma
        , renderGrid      = grid
        , renderRulers    = rulers
+       , renderSpaces    = spaces
        }
 
 parseAlignment :: Parser Alignment

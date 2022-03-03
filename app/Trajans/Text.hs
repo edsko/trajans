@@ -88,6 +88,7 @@ data RenderOptions = RenderOptions {
       renderAlignment :: Alignment
     , renderGrid      :: Bool
     , renderRulers    :: Bool
+    , renderSpaces    :: Bool -- ^ Should spaces be highlighted?
     }
   deriving (Show)
 
@@ -123,7 +124,7 @@ renderLine RenderOptions{..} line =
             else mempty
         , (alignBL $ rect (fromIntegral (spacing s)) 10)
             # lw none
-            # fc (spaceColor s)
+            # (if renderSpaces then fc (spaceColor s) else id)
         ]
 
     spaceColor :: Space -> Colour Double
