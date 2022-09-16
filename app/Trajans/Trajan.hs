@@ -6,13 +6,16 @@ import Trajans.Letter
 
 trajan :: Alphabet
 trajan = mkAlphabet [
-      let width = 8.5
-      in Letter {
+      let regularWidth = 8.5 in
+      Letter {
           letterName    = 'A'
         , letterOffset  = 5
-        , letterBounds  = (-2.5, 2)
-        , letterWidth   = 8.5
-        , letterStrokes =
+        , letterWidth   = regularWidth
+        , letterXCompr  = 6.5
+        , letterBounds  = \(Compression c) ->
+            (-2.5 * c, 2 * c)
+        , letterStrokes = \(Compression c) ->
+            let width = c * regularWidth in
             Let (Diagonal (0, 10) (0 - width / 2, 0)) $ \leftLeg ->
             Let (Diagonal (0, 10) (0 + width / 2, 0)) $ \rightLeg ->
             Let (Horizontal (-5, 4) 10) $ \fullCrossBar ->
@@ -22,19 +25,21 @@ trajan = mkAlphabet [
               , Between (Intersection leftLeg fullCrossBar) (Intersection rightLeg fullCrossBar)
               ]
         }
-    , let topWidth  = 4.5
-          topHeight = 4.75
-          topRadius = topHeight / 2
-          botWidth  = 5.5
-          botHeight = 10 - topHeight
-          botRadius = botHeight / 2
-          flatten   = 0.95
-      in Letter {
+    , Letter {
           letterName    = 'B'
         , letterOffset  = 1
-        , letterBounds  = (0, 4.5)
         , letterWidth   = 5.5
-        , letterStrokes =
+        , letterXCompr  = 3.5
+        , letterBounds  = \(Compression c) -> (0, c * 4.5)
+        , letterStrokes = \(Compression c) ->
+            let topWidth  = c * 4.5
+                botWidth  = c * 5.5
+                flatten   = c * 0.95
+                topHeight = 4.75
+                topRadius = topHeight / 2
+                botHeight = 10 - topHeight
+                botRadius = botHeight / 2
+            in
             Let (rightHalfCircle (topWidth - topRadius * flatten, 10 - topRadius) topRadius flatten) $ \topCircle ->
             Let (rightHalfCircle (botWidth - botRadius * flatten,  0 + botRadius) botRadius flatten) $ \botCircle ->
             mconcat [
@@ -46,69 +51,84 @@ trajan = mkAlphabet [
               , 0 `StraightRightTo` End   botCircle
               ]
         }
-    , let flatten = 0.95
-      in Letter {
+    , Letter {
           letterName    = 'C'
         , letterOffset  = 5
-        , letterBounds  = (-3.5, 2)
-        , letterWidth   = flatten * 5 + 0.8 * 5
-        , letterStrokes =
+        , letterWidth   = 8.8
+        , letterXCompr  = 5.5
+        , letterBounds  = \(Compression c) -> (-3.5 * c, 2 * c)
+        , letterStrokes = \(Compression c) ->
+            let flattenLeft  = c * 0.95
+                flattenRight = c * 0.8
+            in
             mconcat [
-                basic $ leftHalfCircle (0, 5) 5 flatten
-              , basic $ Arc $ MkArc (0, 9.5) 5 (0, 1) (-0.25) (0.8, 0.1)
-              , basic $ Arc $ MkArc (0, 0.5) 5 (0, -1) 0.25 (0.8, 0.1)
+                basic $ leftHalfCircle (0, 5) 5 flattenLeft
+              , basic $ Arc $ MkArc (0, 9.5) 5 (0, 1) (-0.25) (flattenRight, 0.1)
+              , basic $ Arc $ MkArc (0, 0.5) 5 (0, -1) 0.25 (flattenRight, 0.1)
               ]
         }
-    , let flatten = 0.95
-      in Letter {
+    , Letter {
           letterName    = 'D'
         , letterOffset  = 1
-        , letterBounds  = (0, 8.5)
-        , letterWidth   = 4 + flatten * 5
-        , letterStrokes =
-            mconcat [
-                basic $ Vertical        (0, 10) 10
-              , basic $ Horizontal      (0, 10)  4
-              , basic $ Horizontal      (0,  0)  4
-              , basic $ rightHalfCircle (4,  5)  5 flatten
+        , letterWidth   = 8.8
+        , letterXCompr  = 5.5
+        , letterBounds  = \(Compression c) -> (0, c * 7.5)
+        , letterStrokes = \(Compression c) ->
+            let flattenRight = c * 0.95
+                widthLeft    = c * 4
+            in mconcat [
+                basic $ Vertical   (0, 10) 10
+              , basic $ Horizontal (0, 10) widthLeft
+              , basic $ Horizontal (0,  0) widthLeft
+              , basic $ rightHalfCircle (widthLeft, 5) 5 flattenRight
               ]
         }
     , Letter {
           letterName    = 'E'
         , letterOffset  = 2
-        , letterBounds  = (0, 3.8)
         , letterWidth   = 4.2
-        , letterStrokes =
-            mconcat [
+        , letterXCompr  = 4
+        , letterBounds  = \(Compression c) -> (0, c * 3.8)
+        , letterStrokes = \(Compression c) ->
+            let widthTop = c * 4.0
+                widthMid = c * 3.8
+                widthBot = c * 4.2
+            in mconcat [
                 basic $ Vertical   (0, 10) 10.0
-              , basic $ Horizontal (0, 10)  4.0
-              , basic $ Horizontal (0,  5)  3.8
-              , basic $ Horizontal (0,  0)  4.2
+              , basic $ Horizontal (0, 10) widthTop
+              , basic $ Horizontal (0,  5) widthMid
+              , basic $ Horizontal (0,  0) widthBot
               ]
         }
     , Letter {
           letterName    = 'F'
         , letterOffset  = 2
-        , letterBounds  = (0, 3)
         , letterWidth   = 4
-        , letterStrokes =
-            mconcat [
+        , letterXCompr  = 3.5
+        , letterBounds  = \(Compression c) -> (0, c * 3)
+        , letterStrokes = \(Compression c) ->
+            let widthTop = c * 4
+                widthMid = c * 3.8
+            in mconcat [
                 basic $ Vertical   (0, 10) 10.0
-              , basic $ Horizontal (0, 10)  4.0
-              , basic $ Horizontal (0,  5)  3.8
+              , basic $ Horizontal (0, 10) widthTop
+              , basic $ Horizontal (0,  5) widthMid
               ]
         }
-    , let flatten = 0.95
-      in Letter {
+    , Letter {
           letterName    = 'G'
         , letterOffset  = 5
-        , letterBounds  = (-3.5, 3.5)
-        , letterWidth   = 5 * flatten + 5 * 0.8
-        , letterStrokes =
-            Let (Arc $ MkArc (0, 0.5) 5 (0, -1) 0.25 (0.8, 0.1)) $ \bottomArc ->
+        , letterWidth   = 8.8
+        , letterXCompr  = 5.5
+        , letterBounds  = \(Compression c) -> (c * (-3.5), c * 3.5)
+        , letterStrokes = \(Compression c) ->
+            let flattenLeft  = c * 0.95
+                flattenRight = c * 0.8
+            in
+            Let (Arc $ MkArc (0, 0.5) 5 (0, -1) 0.25 (flattenRight, 0.1)) $ \bottomArc ->
             mconcat [
-                basic $ leftHalfCircle (0, 5) 5 flatten
-              , basic $ Arc $ MkArc (0, 9.5) 5 (0, 1) (-0.25) (0.8, 0.1)
+                basic $ leftHalfCircle (0, 5) 5 flattenLeft
+              , basic $ Arc $ MkArc (0, 9.5) 5 (0, 1) (-0.25) (flattenRight, 0.1)
               , Var bottomArc
               , 5 `StraightDownTo` End bottomArc
               ]
@@ -116,107 +136,122 @@ trajan = mkAlphabet [
     , Letter {
           letterName    = 'H'
         , letterOffset  = 1
-        , letterBounds  = (0, 8)
         , letterWidth   = 8
-        , letterStrokes =
+        , letterXCompr  = 5
+        , letterBounds  = \(Compression c) -> (0, c * 8)
+        , letterStrokes = \(Compression c) ->
+            let width = c * 8 in
             mconcat [
-                basic $ Vertical   (0, 10) 10
-              , basic $ Vertical   (8, 10) 10
-              , basic $ Horizontal (0,  5)  8
+                basic $ Vertical   (0,     10) 10
+              , basic $ Vertical   (width, 10) 10
+              , basic $ Horizontal (0,      5) width
               ]
         }
     , Letter {
           letterName    = 'I'
         , letterOffset  = 4
-        , letterBounds  = (0, 1)
         , letterWidth   = 0
-        , letterStrokes =
+        , letterXCompr  = 0
+        , letterBounds  = \(Compression _) -> (0, 1)
+        , letterStrokes = \(Compression _) ->
             mconcat [
                 basic $ Vertical (0, 10) 10
               ]
         }
-    , let botRadius = 2.5
-      in Letter {
+    , Letter {
           letterName    = 'J'
         , letterOffset  = 9
-        , letterBounds  = (-2, 0)
-        , letterWidth   = 2.5 + (2 / 5) * 5
-        , letterStrokes =
-            Let (Arc $ MkArc (-1 * botRadius, botRadius) botRadius (1, 0) (-0.25) (1, 1)) $ \botArc ->
+        , letterWidth   = 4.5
+        , letterXCompr  = 3.5 -- Yves does not provide this value (different J)
+        , letterBounds  = \(Compression c) -> (c * (-2), 0)
+        , letterStrokes = \(Compression c) ->
+            let botRadius = 2.5
+                flattenRight = c
+                flattenLeft  = c * (2 / 5)
+            in
+            Let (Arc $ MkArc (-1 * botRadius, botRadius) botRadius (1, 0) (-0.25) (flattenRight, 1)) $ \botArc ->
             mconcat [
                 10 `StraightDownTo` Start botArc
               , Var botArc
-              , basic $ Arc $ MkArc (-2.5, 0.5) 5 (0, -1) (-0.25) (2 / 5, 0.1)
+              , basic $ Arc $ MkArc (-2.5, 0.5) 5 (0, -1) (-0.25) (flattenLeft, 0.1)
               ]
         }
     , Letter {
           letterName    = 'K'
         , letterOffset  = 2
-        , letterBounds  = (-1, 4.5)
         , letterWidth   = 6.5
-        , letterStrokes = mconcat [
+        , letterXCompr  = 5.5
+        , letterBounds  = \(Compression c) -> (c * (-1), c * 4.5)
+        , letterStrokes = \(Compression c) -> mconcat [
               basic $ Vertical (0, 10) 10
-            , basic $ Diagonal (0.25, 5.25) (4.5, 10)
-            , basic $ Diagonal (0.25, 5.25) (6.5,  0)
+            , basic $ Diagonal (c * 0.25, 5.25) (c * 4.5, 10)
+            , basic $ Diagonal (c * 0.25, 5.25) (c * 6.5,  0)
             ]
         }
     , Letter {
           letterName    = 'L'
         , letterOffset  = 1
-        , letterBounds  = (0, 2.5)
         , letterWidth   = 4.5
-        , letterStrokes =
+        , letterXCompr  = 4
+        , letterBounds  = \(Compression c) -> (0, c * 2.5)
+        , letterStrokes = \(Compression c) ->
             mconcat [
                 basic $ Vertical   (0, 10) 10.0
-              , basic $ Horizontal (0,  0)  4.5
+              , basic $ Horizontal (0,  0) (c * 4.5)
               ]
         }
     , Letter {
           letterName    = 'M'
         , letterOffset  = 0
-        , letterBounds  = (0, 10)
         , letterWidth   = 11
-        , letterStrokes =
+        , letterXCompr  = 9
+        , letterBounds  = \(Compression c) -> (0, c * 10)
+        , letterStrokes = \(Compression c) ->
             mconcat [
-                basic $ Diagonal (-0.5,  0   ) ( 0.5, 10.25)
-              , basic $ Diagonal ( 0.5, 10   ) ( 5.0, -0.25)
-              , basic $ Diagonal ( 5.0, -0.25) ( 9.5, 10.25)
-              , basic $ Diagonal ( 9.5, 10.25) (10.5,  0   )
+                basic $ Diagonal (c * (-0.5),  0   ) (c *  0.5, 10.25)
+              , basic $ Diagonal (c *   0.5 , 10   ) (c *  5.0, -0.25)
+              , basic $ Diagonal (c *   5.0 , -0.25) (c *  9.5, 10.25)
+              , basic $ Diagonal (c *   9.5 , 10.25) (c * 10.5,  0   )
               ]
         }
     , Letter {
           letterName    = 'N'
         , letterOffset  = 1
-        , letterBounds  = (0, 9)
         , letterWidth   = 9
-        , letterStrokes =
+        , letterXCompr  = 5.5
+        , letterBounds  = \(Compression c) -> (0, c * 9)
+        , letterStrokes = \(Compression c) ->
+            let width = c * 9 in
             mconcat [
-                basic $ Vertical (0, 10.25) 10.25
-              , basic $ Vertical (9, 10.25) 10.25
-              , basic $ Diagonal (0, 10.25) (9, -0.25)
+                basic $ Vertical (    0, 10.25) 10.25
+              , basic $ Vertical (width, 10.25) 10.25
+              , basic $ Diagonal (    0, 10.25) (width, -0.25)
               ]
         }
-    , let flatten = 0.95
-      in Letter {
+    , Letter {
           letterName    = 'O'
         , letterOffset  = 5
-        , letterBounds  = (-3.7, 3.7)
-        , letterWidth   = 10 * flatten
-        , letterStrokes =
+        , letterWidth   = 9.7
+        , letterXCompr  = 6.5
+        , letterBounds  = \(Compression c) -> (c * (-3.7), c * 3.7)
+        , letterStrokes = \(Compression c) ->
+            let flatten = c * 0.95 in
             mconcat [
                 basic $ Arc $ MkArc (0, 5) 5 (0, 1) 1 (flatten, 1)
               ]
         }
-    , let topWidth  = 5.0
-          topHeight = 5.5
-          topRadius = topHeight / 2
-          flatten   = 0.95
-      in Letter {
+    , Letter {
           letterName    = 'P'
-        , letterOffset  = 1
-        , letterBounds  = (0, 3.5)
+        , letterOffset  = 2
         , letterWidth   = 5
-        , letterStrokes =
+        , letterXCompr  = 3.5
+        , letterBounds  = \(Compression c) -> (0, c * 3.5)
+        , letterStrokes = \(Compression c) ->
+            let topWidth  = c * 5.0
+                flatten   = c * 0.95
+                topHeight = 5.5
+                topRadius = topHeight / 2
+            in
             Let (rightHalfCircle (topWidth - topRadius * flatten, 10 - topRadius) topRadius flatten) $ \topCircle ->
             mconcat [
                 basic $ Vertical (0, 10) 10
@@ -225,32 +260,35 @@ trajan = mkAlphabet [
               , 0 `StraightRightTo` End   topCircle
               ]
         }
-    , let flatten = 0.95
-      in Letter {
+    , Letter {
           letterName    = 'Q'
         , letterOffset  = 5
-        , letterBounds  = (-3.7, 3.7)
-        , letterWidth   = flatten * 10
-        , letterStrokes =
+        , letterWidth   = 9.7
+        , letterXCompr  = 6.5
+        , letterBounds  = \(Compression c) -> (c * (-3.7), c * 3.7)
+        , letterStrokes = \(Compression c) ->
+            let flatten = c * 0.95 in
             Let (Arc $ MkArc (0, 5) 5 (0, 1) 1 (flatten, 1)) $ \oh ->
-            Let (Diagonal (-2, 2) (6, -2)) $ \longTail ->
+            Let (Diagonal (c * (-2), 2) (c * 6, -2)) $ \longTail ->
             mconcat [
                 Var oh
               , Between (Intersection oh longTail) (End longTail)
               ]
         }
-    , let topWidth  = 5.0
-          topHeight = 5.5
-          topRadius = topHeight / 2
-          flatten   = 0.95
-      in Letter {
+    , Letter {
           letterName    = 'R'
         , letterOffset  = 2
-        , letterBounds  = (0, 4.5)
         , letterWidth   = 7
-        , letterStrokes =
+        , letterXCompr  = 5
+        , letterBounds  = \(Compression c) -> (0, c * 4.5)
+        , letterStrokes = \(Compression c) ->
+            let topWidth  = c * 5.0
+                flatten   = c * 0.95
+                topHeight = 5.5
+                topRadius = topHeight / 2
+            in
             Let (rightHalfCircle (topWidth - topRadius * flatten, 10 - topRadius) topRadius flatten) $ \topCircle ->
-            Let (Diagonal (0, 10) (7, 0)) $ \longLeg ->
+            Let (Diagonal (0, 10) (c * 7, 0)) $ \longLeg ->
             mconcat [
                 basic $ Vertical (0, 10) 10
               , Var topCircle
@@ -263,106 +301,117 @@ trajan = mkAlphabet [
           midOffset = 0.21 -- how far is the inflection point above the center?
       in Letter {
           letterName    = 'S'
-        , letterOffset  = 1
-        , letterBounds  = (1, 4)
+        , letterOffset  = 4.5
         , letterWidth   = 5
-        , letterStrokes =
+        , letterXCompr  = 3.5
+        , letterBounds  = \(Compression c) -> (c * (-1.5), c * 1.5)
+        , letterStrokes = \(Compression c) ->
             mconcat [
                 basic $ DoubleCurve $ MkDoubleCurve {
-                    doubleCurveStart       = (0   ,  0 + botOffset)
-                  , doubleCurveMid         = (2.5 ,  5 + midOffset)
-                  , doubleCurveFinish      = (5   , 10 - botOffset)
-                  , doubleCurveControlEnds = (5.35, -1.7)
-                  , doubleCurveControlMid  = (4.1, -1.4)
-                  , doubleCurveScale1      = (1, 1)
-                  , doubleCurveScale2      = (0.95, 1)
+                    doubleCurveStart       = (c * (-2.5),  0 + botOffset)
+                  , doubleCurveMid         = (c *    0  ,  5 + midOffset)
+                  , doubleCurveFinish      = (c *  2.5  , 10 - botOffset)
+                  , doubleCurveControlEnds = (c *  5.35 , -1.7) -- relative
+                  , doubleCurveControlMid  = (c *  4.1  , -1.4)
+                  , doubleCurveScale1      = (1    , 1)
+                  , doubleCurveScale2      = (0.95 , 1)
                   }
               ]
         }
     , Letter {
           letterName    = 'T'
         , letterOffset  = 1
-        , letterBounds  = (2, 6)
         , letterWidth   = 8
-        , letterStrokes =
+        , letterXCompr  = 6
+        , letterBounds  = \(Compression c) -> (c * 2, c * 6)
+        , letterStrokes = \(Compression c) ->
+            let width = c * 8 in
             mconcat [
-                basic $ Vertical   (4, 10) 10
-              , basic $ Horizontal (0, 10)  8
+                basic $ Vertical (width / 2, 10) 10
+              , basic $ Horizontal (0, 10) width
               ]
         }
     , Letter {
           letterName    = 'U'
         , letterOffset  = 5
-        , letterBounds  = (-3.5, 3.5)
         , letterWidth   = 8
-        , letterStrokes =
-            Let (Arc $ MkArc (0, 3) 4 (-1, 0) 0.5 (1, 3 / 4)) $ \bottomArc ->
+        , letterXCompr  = 5.5
+        , letterBounds  = \(Compression c) -> (c * (-3.5), c * 3.5)
+        , letterStrokes = \(Compression c) ->
+            Let (Arc $ MkArc (0, 3) 4 (-1, 0) 0.5 (c, 3 / 4)) $ \bottomArc ->
             mconcat [
                 Var bottomArc
               , 10 `StraightDownTo` Start bottomArc
               , 10 `StraightDownTo` End   bottomArc
               ]
         }
-    , let width = 8.4
-      in Letter {
+    , Letter {
           letterName    = 'V'
         , letterOffset  = 5
-        , letterBounds  = (-2.3, 2)
         , letterWidth   = 8.4
-        , letterStrokes =
+        , letterXCompr  = 6.5
+        , letterBounds  = \(Compression c) -> (c * (-2.3), c * 2)
+        , letterStrokes = \(Compression c) ->
+            let width = c * 8.4 in
             mconcat [
                 basic $ Diagonal (0, -0.25) (-1 * width / 2, 10)
               , basic $ Diagonal (0, -0.25) ( 1 * width / 2, 10)
               ]
         }
-    , let width = 7
-      in Letter {
+    , Letter {
           letterName    = 'W'
-        , letterOffset  = -2
-        , letterBounds  = (2, 12.5)
+        , letterOffset  = 5
         , letterWidth   = 14
-        , letterStrokes =
+        , letterXCompr  = 12.5
+        , letterBounds  = \(Compression c) -> (c * (-5), c * 5.5)
+        , letterStrokes = \(Compression c) ->
+            let width = c * 7 in
             mconcat [
-                basic $ Diagonal (0.0 * width, 10.00) (0.5 * width, -0.25)
-              , basic $ Diagonal (0.5 * width, -0.25) (1.0 * width, 10.25)
-              , basic $ Diagonal (1.0 * width, 10.25) (1.5 * width, -0.25)
-              , basic $ Diagonal (1.5 * width, -0.25) (2.0 * width, 10.00)
+                basic $ Diagonal (-1   * width, 10.00) (-0.5 * width, -0.25)
+              , basic $ Diagonal (-0.5 * width, -0.25) ( 0   * width, 10.25)
+              , basic $ Diagonal ( 0   * width, 10.25) ( 0.5 * width, -0.25)
+              , basic $ Diagonal ( 0.5 * width, -0.25) ( 1.0 * width, 10.00)
               ]
         }
-    , let topWidth = 5.5
-          botWidth = 6.5
-      in Letter {
+    , Letter {
           letterName    = 'X'
         , letterOffset  = 5
-        , letterBounds  = (-2, 2)
         , letterWidth   = 6.5
-        , letterStrokes =
+        , letterXCompr  = 6
+        , letterBounds  = \(Compression c) -> (c * (-2), c * 2)
+        , letterStrokes = \(Compression c) ->
+            let topWidth = c * 5.5
+                botWidth = c * 6.5
+            in
             mconcat [
                 basic $ Diagonal (-0.5 * topWidth, 10) ( 0.5 * botWidth, 0)
               , basic $ Diagonal ( 0.5 * topWidth, 10) (-0.5 * botWidth, 0)
               ]
         }
-    , let width = 7
-      in Letter {
+    , Letter {
           letterName    = 'Y'
         , letterOffset  = 5
-        , letterBounds  = (-2.4, 2.2)
         , letterWidth   = 7
-        , letterStrokes =
+        , letterXCompr  = 6
+        , letterBounds  = \(Compression c) -> (c * (-2.4), c * 2.2)
+        , letterStrokes = \(Compression c) ->
+            let width = c * 7 in
             mconcat [
                 basic $ Diagonal (-0.5 * width, 10) (0, 5)
               , basic $ Diagonal ( 0.5 * width, 10) (0, 5)
               , basic $ Vertical (0, 5) 5
               ]
         }
-    , let topWidth = 7.7
-          botWidth = 8
-      in Letter {
+    , Letter {
           letterName    = 'Z'
         , letterOffset  = 9
-        , letterBounds  = (-6.5, -1.5)
         , letterWidth   = 8
-        , letterStrokes =
+        , letterXCompr  = 6
+        , letterBounds  = \(Compression c) -> (c * (-6.5), c * (-1.5))
+        , letterStrokes = \(Compression c) ->
+            let topWidth = c * 7.7
+                botWidth = c * 8
+            in
             Let (Horizontal (-1 * topWidth, 10) topWidth) $ \top ->
             Let (Horizontal (-1 * botWidth,  0) botWidth) $ \bot ->
             mconcat [

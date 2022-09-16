@@ -40,12 +40,14 @@ executable trajans
       Trajans.Alphabet
       Trajans.Grid
       Trajans.Letter
+      Trajans.RenderOptions
       Trajans.Text
       Trajans.Trajan
       Trajans.Util.Alternate
       Trajans.Util.Diagrams
   build-depends:
       base
+    , colour
     , containers
     , diagrams-lib
     , diagrams-svg

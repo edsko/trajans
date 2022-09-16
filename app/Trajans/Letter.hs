@@ -1,9 +1,10 @@
 module Trajans.Letter (
     -- * Letter definition
     Letter(..)
+  , Compression(..)
+  , letterCompression
   , letterOpticalWidth
   , strokeLetter
-  , debugLetter
     -- * Strokes
   , BasicStroke(..)
   , Arc(..)
@@ -17,6 +18,7 @@ import Data.Functor.Const
 import Diagrams.Backend.SVG
 import Diagrams.Prelude hiding (Const(..), Empty, Start, End, arcLength)
 
+import Trajans.RenderOptions
 import Trajans.Util.Diagrams
 
 {-------------------------------------------------------------------------------
@@ -31,33 +33,54 @@ data Letter = Letter {
       -- | The offset from the left margin of the letter
     , letterOffset :: Double
 
-      -- | The bounds of the letter for spacing, relative to 'letterOffset'
-    , letterBounds :: (Double, Double)
-
       -- | Regular (uncompressed) width of the letter
     , letterWidth :: Double
 
+      -- | Compressed width of the letter
+    , letterXCompr :: Double
+
+      -- | The bounds of the letter for spacing, relative to 'letterOffset'
+      --
+      -- Gets the compression factor as an argument.
+    , letterBounds :: Compression -> (Double, Double)
+
       -- | The lines of the letter, relative to 'letterOffset'
-    , letterStrokes :: forall f. Strokes f
+      --
+      -- Gets the compression factor as an argument.
+    , letterStrokes :: Compression -> forall f. Strokes f
     }
+
+-- | Compression factor (actual width over width)
+newtype Compression = Compression Double
 
 instance Show Letter where
   show Letter{letterName} = show letterName
 
+letterCompression :: RenderOptions -> Letter -> Compression
+letterCompression RenderOptions{..} Letter{..}
+  | letterWidth == 0 = Compression $ 1
+  | renderXCompr     = Compression $ letterXCompr / letterWidth
+  | otherwise        = Compression $ 1
+
 -- | The distance between the 'letterBounds'
-letterOpticalWidth :: Letter -> Double
-letterOpticalWidth Letter{letterBounds = (x, x')} = x' - x
+letterOpticalWidth :: RenderOptions -> Letter -> Double
+letterOpticalWidth opts l@Letter{..} =
+    x' - x
+  where
+    x, x' :: Double
+    (x, x') = letterBounds (letterCompression opts l)
 
-letterPath :: Letter -> Path V2 Double
-letterPath Letter{..} =
-    Path (intStrokes letterStrokes) # translateX letterOffset
+strokeLetter :: RenderOptions -> Letter -> Diagram B
+strokeLetter opts@RenderOptions{..} l@Letter{..} =
+    rendered # translateX letterOffset
+  where
+    rendered :: Diagram B
+    rendered
+      | renderDebug = debugStrokes strokes
+      | otherwise   = strokePath $ Path (intStrokes strokes)
 
-strokeLetter :: Letter -> Diagram B
-strokeLetter = strokePath . letterPath
-
-debugLetter :: Letter -> Diagram B
-debugLetter Letter{..} =
-    debugStrokes letterStrokes # translateX letterOffset
+    strokes :: Strokes f
+    strokes = letterStrokes (letterCompression opts l)
 
 {-------------------------------------------------------------------------------
   Single stroke of a letter
@@ -91,10 +114,10 @@ intStroke (DoubleCurve c)            = intDoubleCurve c
 
 -- | Show how the stroke is constructed
 --
--- Currently we only do anything here for 'DoubleCurve'.
+-- Currently we only do anything special for 'DoubleCurve'.
 debugStroke :: BasicStroke -> Diagram B
 debugStroke (DoubleCurve c) = debugDoubleCurve c
-debugStroke _otherwise      = mempty
+debugStroke s               = strokePath $ Path [intStroke s]
 
 {-------------------------------------------------------------------------------
   Arc

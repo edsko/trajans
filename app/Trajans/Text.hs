@@ -5,6 +5,7 @@ module Trajans.Text (
   , RenderOptions(..)
   , constructLine
   , renderLine
+  , renderLetter
   ) where
 
 import Prelude hiding (Word)
@@ -16,11 +17,12 @@ import Data.List.NonEmpty qualified as NE
 import Diagrams.Prelude hiding (Line)
 import Diagrams.Backend.SVG
 
+import Trajans.Grid
 import Trajans.Letter
+import Trajans.RenderOptions
 import Trajans.Trajan
 import Trajans.Util.Alternate (Alternate)
 import Trajans.Util.Alternate qualified as Alt
-import Trajans.Grid
 
 {-------------------------------------------------------------------------------
   Line of text
@@ -34,9 +36,12 @@ data Space =
   | InterWord
   deriving (Show)
 
-spacing :: Space -> Int
-spacing InterLetter = 5
-spacing InterWord   = 9
+spacing :: RenderOptions -> Space -> Int
+spacing RenderOptions{..} space =
+    case (renderSpacing, space) of
+      (Proper _ , InterLetter) -> 5
+      (Regular  , InterLetter) -> 1
+      (_        , InterWord  ) -> 9
 
 constructLine :: String -> Maybe Line
 constructLine = fmap (Line . onWords) . parseLine
@@ -52,17 +57,22 @@ constructLine = fmap (Line . onWords) . parseLine
 -------------------------------------------------------------------------------}
 
 data WithOffset a = WithOffset a Double
+  deriving (Show)
 
 renderWithOffset :: (a -> Diagram B) -> (WithOffset a) -> Diagram B
-renderWithOffset f (WithOffset a x) = f a # translateX x
+renderWithOffset f (WithOffset a x) =
+    f a
+--      # showOrigin -- For debugging spacing
+      # translateX x
 
 -- | Compute offsets of all letters and spaces
 --
 -- Additionally returns the total width of the line (within the bounds)
 computeOffsets ::
-     Line
+     RenderOptions
+  -> Line
   -> (Alternate (WithOffset Letter) (WithOffset Space), Double)
-computeOffsets (Line l) =
+computeOffsets opts@RenderOptions{..} (Line l) =
     flip runState initCursorPosition $
       Alt.traverse onLetter onSpace l
   where
@@ -70,72 +80,100 @@ computeOffsets (Line l) =
     initCursorPosition = 0
 
     onLetter :: Letter -> State Double (WithOffset Letter)
-    onLetter = advanceBy letterOpticalWidth
+    onLetter = advanceBy $ case renderSpacing of
+                             Proper _ -> letterOpticalWidth opts
+                             Regular  -> const 10
 
     onSpace :: Letter -> Space -> Letter -> State Double (WithOffset Space)
-    onSpace _ s _ = advanceBy (fromIntegral . spacing) s
+    onSpace _ s _ = advanceBy (fromIntegral . spacing opts) s
 
     advanceBy :: (a -> Double) -> a -> State Double (WithOffset a)
     advanceBy f x = state $ \cursor -> (x `WithOffset` cursor, cursor + f x)
 
-data Alignment =
-    AlignLeft
-  | AlignCenter
-  | AlignRight
-  deriving (Show)
-
-data RenderOptions = RenderOptions {
-      renderAlignment :: Alignment
-    , renderGrid      :: Bool
-    , renderRulers    :: Bool
-    , renderSpaces    :: Bool -- ^ Should spaces be highlighted?
-    }
-  deriving (Show)
-
 renderLine :: RenderOptions -> Line -> Diagram B
-renderLine RenderOptions{..} line =
+renderLine opts@RenderOptions{..} line =
       shiftOrigin renderAlignment
     . (if renderRulers then addRulers else id)
     . uncurry atop  -- We are careful to position the letter atop the spaces
-    . bimap (foldMap (renderWithOffset renderLetter))
-            (foldMap (renderWithOffset renderSpace))
+    . bimap (foldMap (renderWithOffset $ renderLetter opts))
+            (foldMap (renderWithOffset $ renderSpace  opts))
     . Alt.partition
     $ withOffsets
   where
-    (withOffsets, totalWidth) = computeOffsets line
+    (withOffsets, totalWidth) = computeOffsets opts line
 
     shiftOrigin :: Alignment -> Diagram B -> Diagram B
     shiftOrigin AlignLeft   = id
     shiftOrigin AlignCenter = translateX (-0.5 * totalWidth)
     shiftOrigin AlignRight  = translateX (-1.0 * totalWidth)
 
-    renderLetter :: Letter -> Diagram B
-    renderLetter l = mconcat [
-          strokeLetter l
-        , if renderGrid
-            then gridOfWidth 10 True
-            else mempty
-        ] # translateX (-1 * (fst (letterBounds l) + letterOffset l))
-
-    renderSpace :: Space -> Diagram B
-    renderSpace s = mconcat [
-          if renderGrid
-            then gridOfWidth (spacing s) False
-            else mempty
-        , (alignBL $ rect (fromIntegral (spacing s)) 10)
-            # lw none
-            # (if renderSpaces then fc (spaceColor s) else id)
+    addRulers :: Diagram B -> Diagram B
+    addRulers l = mconcat [
+          l
+        , strokePath (fromVertices [p2 (-5, 10), p2 (totalWidth + 5, 10)])
+            # lw thin
+        , strokePath (fromVertices [p2 (-5,  0), p2 (totalWidth + 5,  0)])
+            # lw thin
         ]
+
+-- | Render space
+--
+-- Origin will be at the bottom left.
+renderSpace :: RenderOptions -> Space -> Diagram B
+renderSpace opts@RenderOptions{..} s = mconcat [
+      -- Rendering grids for spaces gets very confusing, disabled for now
+      -- (Primarily because spaces will line up with letter bounds, which
+      -- may not be aligned with the grid, and hence the grids of the spaces
+      -- will overlap with the grids of the letters)
+      -- if renderGrid
+      --  then gridOfWidth spaceWidth False
+      --  else mempty
+      (alignBL $ rect (fromIntegral spaceWidth) 10)
+        # lw none
+        # (case renderSpacing of
+             Proper True -> fc (spaceColor s)
+             _otherwise  -> id)
+    ]
+  where
+    spaceWidth :: Int
+    spaceWidth = spacing opts s
 
     spaceColor :: Space -> Colour Double
     spaceColor InterLetter = pink
     spaceColor InterWord   = lightblue
 
-    addRulers :: Diagram B -> Diagram B
-    addRulers l = mconcat [
-          strokePath (fromVertices [p2 (-5, 10), p2 (totalWidth + 5, 10)]) # lw thin
-        , l
-        , strokePath (fromVertices [p2 (-5,  0), p2 (totalWidth + 5,  0)]) # lw thin
+-- | Render letter
+--
+-- The origin depends on the render options:
+--
+-- o If we are doing proper spacing, the origin will be the bottom left bound.
+-- o Otherwise, the origin will be the bottom left of the grid.
+renderLetter :: RenderOptions -> Letter -> Diagram B
+renderLetter opts@RenderOptions{..} l@Letter{..} = mconcat [
+      strokeLetter opts l
+        # lw (intThickness renderThickness)
+        # lc renderColour
+    , if renderGrid
+        then gridOfWidth 10 True
+        else mempty
+    , if renderBounds
+        then bounds
+        else mempty
+    ] # (case renderSpacing of
+           Proper _ -> translateX (-1 * (boundLeft + letterOffset))
+           Regular  -> id)
+  where
+    boundLeft, boundRight :: Double
+    (boundLeft, boundRight) = letterBounds (letterCompression opts l)
+
+    bounds :: Diagram B
+    bounds = mconcat [
+          fromVertices [ p2 (letterOffset + boundLeft, -1)
+                       , p2 (letterOffset + boundLeft, 11)
+                       ] # lc red
+        , fromVertices [ p2 (letterOffset + boundRight, -1)
+                       , p2 (letterOffset + boundRight, 11)
+                       ] # lc red
         ]
 
 {-------------------------------------------------------------------------------
