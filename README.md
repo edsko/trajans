@@ -93,7 +93,8 @@ cabal run trajans -- --spacing regular \
 We can ask for rulers (guidelines) above and below the line:
 
 ```
-cabal run trajans -- --rulers --colour blue --thickness medium \
+cabal run trajans -- --rulers \
+  --colour blue --thickness medium \
   -o examples/rulers.png \
   -h 400 \
   --text $'The quick\nbrown fox\njumps over\nthe lazy dog'
@@ -126,3 +127,15 @@ cabal run trajans -- --slope 5 \
 ```
 
 ![](examples/sloped.png)
+
+Finally, we can give them an upwards push (also in degrees):
+
+```
+cabal run trajans -- --upwards 3 \
+  --slope 5 --xcompr \
+  -o examples/upwards.png \
+  -h 400 \
+  --text $'The quick\nbrown fox\njumps over\nthe lazy dog'
+```
+
+![](examples/upwards.png)

@@ -48,6 +48,7 @@ data RenderOptions = RenderOptions {
     , renderThickness :: Thickness
     , renderColour    :: Colour Double
     , renderSlope     :: Double
+    , renderUpwards   :: Double
     , renderDebug     :: Bool -- ^ For debugging the renderer
     }
   deriving (Show)
@@ -100,6 +101,13 @@ parseRenderOptions =
       <*> (option auto $ mconcat [
                long "slope"
              , help "Slope of the letters"
+             , value 0
+             , metavar "DEG"
+             , showDefault
+             ])
+      <*> (option auto $ mconcat [
+               long "upwards"
+             , help "Give the letters an upwards push"
              , value 0
              , metavar "DEG"
              , showDefault

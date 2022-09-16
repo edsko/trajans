@@ -81,10 +81,12 @@ strokeLetter opts@RenderOptions{..} l@Letter{..} =
     rendered
       | renderDebug = debugStrokes strokes
       | otherwise   = strokePath $ Path (intStrokes strokes)
-                                     # shearX shearDistance
+                                     # shearX distShearX
+                                     # shearY distShearY
 
-    shearDistance :: Double
-    shearDistance = 1 / tan ((90 - renderSlope) * (pi/180))
+    distShearX, distShearY :: Double
+    distShearX = 1 / tan ((90 - renderSlope)   * (pi / 180))
+    distShearY = 1 / tan ((90 - renderUpwards) * (pi / 180))
 
     strokes :: Strokes f
     strokes = letterStrokes (letterCompression opts l)
