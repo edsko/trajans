@@ -11,6 +11,7 @@ trajan = mkAlphabet [
           letterName    = 'A'
         , letterOffset  = 5
         , letterBounds  = (-2.5, 2)
+        , letterWidth   = 8.5
         , letterStrokes =
             Let (Diagonal (0, 10) (0 - width / 2, 0)) $ \leftLeg ->
             Let (Diagonal (0, 10) (0 + width / 2, 0)) $ \rightLeg ->
@@ -32,6 +33,7 @@ trajan = mkAlphabet [
           letterName    = 'B'
         , letterOffset  = 1
         , letterBounds  = (0, 4.5)
+        , letterWidth   = 5.5
         , letterStrokes =
             Let (rightHalfCircle (topWidth - topRadius * flatten, 10 - topRadius) topRadius flatten) $ \topCircle ->
             Let (rightHalfCircle (botWidth - botRadius * flatten,  0 + botRadius) botRadius flatten) $ \botCircle ->
@@ -49,6 +51,7 @@ trajan = mkAlphabet [
           letterName    = 'C'
         , letterOffset  = 5
         , letterBounds  = (-3.5, 2)
+        , letterWidth   = flatten * 5 + 0.8 * 5
         , letterStrokes =
             mconcat [
                 basic $ leftHalfCircle (0, 5) 5 flatten
@@ -61,6 +64,7 @@ trajan = mkAlphabet [
           letterName    = 'D'
         , letterOffset  = 1
         , letterBounds  = (0, 8.5)
+        , letterWidth   = 4 + flatten * 5
         , letterStrokes =
             mconcat [
                 basic $ Vertical        (0, 10) 10
@@ -73,6 +77,7 @@ trajan = mkAlphabet [
           letterName    = 'E'
         , letterOffset  = 2
         , letterBounds  = (0, 3.8)
+        , letterWidth   = 4.2
         , letterStrokes =
             mconcat [
                 basic $ Vertical   (0, 10) 10.0
@@ -85,6 +90,7 @@ trajan = mkAlphabet [
           letterName    = 'F'
         , letterOffset  = 2
         , letterBounds  = (0, 3)
+        , letterWidth   = 4
         , letterStrokes =
             mconcat [
                 basic $ Vertical   (0, 10) 10.0
@@ -97,6 +103,7 @@ trajan = mkAlphabet [
           letterName    = 'G'
         , letterOffset  = 5
         , letterBounds  = (-3.5, 3.5)
+        , letterWidth   = 5 * flatten + 5 * 0.8
         , letterStrokes =
             Let (Arc $ MkArc (0, 0.5) 5 (0, -1) 0.25 (0.8, 0.1)) $ \bottomArc ->
             mconcat [
@@ -110,6 +117,7 @@ trajan = mkAlphabet [
           letterName    = 'H'
         , letterOffset  = 1
         , letterBounds  = (0, 8)
+        , letterWidth   = 8
         , letterStrokes =
             mconcat [
                 basic $ Vertical   (0, 10) 10
@@ -121,6 +129,7 @@ trajan = mkAlphabet [
           letterName    = 'I'
         , letterOffset  = 4
         , letterBounds  = (0, 1)
+        , letterWidth   = 0
         , letterStrokes =
             mconcat [
                 basic $ Vertical (0, 10) 10
@@ -131,6 +140,7 @@ trajan = mkAlphabet [
           letterName    = 'J'
         , letterOffset  = 9
         , letterBounds  = (-2, 0)
+        , letterWidth   = 2.5 + (2 / 5) * 5
         , letterStrokes =
             Let (Arc $ MkArc (-1 * botRadius, botRadius) botRadius (1, 0) (-0.25) (1, 1)) $ \botArc ->
             mconcat [
@@ -143,6 +153,7 @@ trajan = mkAlphabet [
           letterName    = 'K'
         , letterOffset  = 2
         , letterBounds  = (-1, 4.5)
+        , letterWidth   = 6.5
         , letterStrokes = mconcat [
               basic $ Vertical (0, 10) 10
             , basic $ Diagonal (0.25, 5.25) (4.5, 10)
@@ -153,6 +164,7 @@ trajan = mkAlphabet [
           letterName    = 'L'
         , letterOffset  = 1
         , letterBounds  = (0, 2.5)
+        , letterWidth   = 4.5
         , letterStrokes =
             mconcat [
                 basic $ Vertical   (0, 10) 10.0
@@ -163,6 +175,7 @@ trajan = mkAlphabet [
           letterName    = 'M'
         , letterOffset  = 0
         , letterBounds  = (0, 10)
+        , letterWidth   = 11
         , letterStrokes =
             mconcat [
                 basic $ Diagonal (-0.5,  0   ) ( 0.5, 10.25)
@@ -175,6 +188,7 @@ trajan = mkAlphabet [
           letterName    = 'N'
         , letterOffset  = 1
         , letterBounds  = (0, 9)
+        , letterWidth   = 9
         , letterStrokes =
             mconcat [
                 basic $ Vertical (0, 10.25) 10.25
@@ -187,6 +201,7 @@ trajan = mkAlphabet [
           letterName    = 'O'
         , letterOffset  = 5
         , letterBounds  = (-3.7, 3.7)
+        , letterWidth   = 10 * flatten
         , letterStrokes =
             mconcat [
                 basic $ Arc $ MkArc (0, 5) 5 (0, 1) 1 (flatten, 1)
@@ -200,6 +215,7 @@ trajan = mkAlphabet [
           letterName    = 'P'
         , letterOffset  = 1
         , letterBounds  = (0, 3.5)
+        , letterWidth   = 5
         , letterStrokes =
             Let (rightHalfCircle (topWidth - topRadius * flatten, 10 - topRadius) topRadius flatten) $ \topCircle ->
             mconcat [
@@ -214,6 +230,7 @@ trajan = mkAlphabet [
           letterName    = 'Q'
         , letterOffset  = 5
         , letterBounds  = (-3.7, 3.7)
+        , letterWidth   = flatten * 10
         , letterStrokes =
             Let (Arc $ MkArc (0, 5) 5 (0, 1) 1 (flatten, 1)) $ \oh ->
             Let (Diagonal (-2, 2) (6, -2)) $ \longTail ->
@@ -230,6 +247,7 @@ trajan = mkAlphabet [
           letterName    = 'R'
         , letterOffset  = 2
         , letterBounds  = (0, 4.5)
+        , letterWidth   = 7
         , letterStrokes =
             Let (rightHalfCircle (topWidth - topRadius * flatten, 10 - topRadius) topRadius flatten) $ \topCircle ->
             Let (Diagonal (0, 10) (7, 0)) $ \longLeg ->
@@ -247,6 +265,7 @@ trajan = mkAlphabet [
           letterName    = 'S'
         , letterOffset  = 1
         , letterBounds  = (1, 4)
+        , letterWidth   = 5
         , letterStrokes =
             mconcat [
                 basic $ DoubleCurve $ MkDoubleCurve {
@@ -264,6 +283,7 @@ trajan = mkAlphabet [
           letterName    = 'T'
         , letterOffset  = 1
         , letterBounds  = (2, 6)
+        , letterWidth   = 8
         , letterStrokes =
             mconcat [
                 basic $ Vertical   (4, 10) 10
@@ -274,6 +294,7 @@ trajan = mkAlphabet [
           letterName    = 'U'
         , letterOffset  = 5
         , letterBounds  = (-3.5, 3.5)
+        , letterWidth   = 8
         , letterStrokes =
             Let (Arc $ MkArc (0, 3) 4 (-1, 0) 0.5 (1, 3 / 4)) $ \bottomArc ->
             mconcat [
@@ -287,6 +308,7 @@ trajan = mkAlphabet [
           letterName    = 'V'
         , letterOffset  = 5
         , letterBounds  = (-2.3, 2)
+        , letterWidth   = 8.4
         , letterStrokes =
             mconcat [
                 basic $ Diagonal (0, -0.25) (-1 * width / 2, 10)
@@ -298,6 +320,7 @@ trajan = mkAlphabet [
           letterName    = 'W'
         , letterOffset  = -2
         , letterBounds  = (2, 12.5)
+        , letterWidth   = 14
         , letterStrokes =
             mconcat [
                 basic $ Diagonal (0.0 * width, 10.00) (0.5 * width, -0.25)
@@ -312,6 +335,7 @@ trajan = mkAlphabet [
           letterName    = 'X'
         , letterOffset  = 5
         , letterBounds  = (-2, 2)
+        , letterWidth   = 6.5
         , letterStrokes =
             mconcat [
                 basic $ Diagonal (-0.5 * topWidth, 10) ( 0.5 * botWidth, 0)
@@ -323,6 +347,7 @@ trajan = mkAlphabet [
           letterName    = 'Y'
         , letterOffset  = 5
         , letterBounds  = (-2.4, 2.2)
+        , letterWidth   = 7
         , letterStrokes =
             mconcat [
                 basic $ Diagonal (-0.5 * width, 10) (0, 5)
@@ -336,6 +361,7 @@ trajan = mkAlphabet [
           letterName    = 'Z'
         , letterOffset  = 9
         , letterBounds  = (-6.5, -1.5)
+        , letterWidth   = 8
         , letterStrokes =
             Let (Horizontal (-1 * topWidth, 10) topWidth) $ \top ->
             Let (Horizontal (-1 * botWidth,  0) botWidth) $ \bot ->

@@ -70,7 +70,7 @@ computeOffsets (Line l) =
     initCursorPosition = 0
 
     onLetter :: Letter -> State Double (WithOffset Letter)
-    onLetter = advanceBy letterWidth
+    onLetter = advanceBy letterOpticalWidth
 
     onSpace :: Letter -> Space -> Letter -> State Double (WithOffset Space)
     onSpace _ s _ = advanceBy (fromIntegral . spacing) s

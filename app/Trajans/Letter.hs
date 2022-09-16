@@ -1,7 +1,7 @@
 module Trajans.Letter (
     -- * Letter definition
     Letter(..)
-  , letterWidth
+  , letterOpticalWidth
   , strokeLetter
   , debugLetter
     -- * Strokes
@@ -34,6 +34,9 @@ data Letter = Letter {
       -- | The bounds of the letter for spacing, relative to 'letterOffset'
     , letterBounds :: (Double, Double)
 
+      -- | Regular (uncompressed) width of the letter
+    , letterWidth :: Double
+
       -- | The lines of the letter, relative to 'letterOffset'
     , letterStrokes :: forall f. Strokes f
     }
@@ -42,8 +45,8 @@ instance Show Letter where
   show Letter{letterName} = show letterName
 
 -- | The distance between the 'letterBounds'
-letterWidth :: Letter -> Double
-letterWidth Letter{letterBounds = (x, x')} = x' - x
+letterOpticalWidth :: Letter -> Double
+letterOpticalWidth Letter{letterBounds = (x, x')} = x' - x
 
 letterPath :: Letter -> Path V2 Double
 letterPath Letter{..} =
