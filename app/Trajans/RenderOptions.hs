@@ -68,7 +68,7 @@ intThickness Thick  = thick
 parseRenderOptions :: Parser RenderOptions
 parseRenderOptions =
     RenderOptions
-      <$> (fromMaybe AlignLeft <$> optional parseAlignment)
+      <$> (optional' AlignCenter parseAlignment)
       <*> (switch $ mconcat [
                long "grid"
              , help "Render a grid"

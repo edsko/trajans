@@ -15,7 +15,7 @@ import Data.List.NonEmpty (NonEmpty(..))
 import Data.List.NonEmpty qualified as NE
 
 import Diagrams.Prelude hiding (Line)
-import Diagrams.Backend.SVG
+import Diagrams.Backend.Cairo
 
 import Trajans.Grid
 import Trajans.Letter
@@ -36,12 +36,17 @@ data Space =
   | InterWord
   deriving (Show)
 
-spacing :: RenderOptions -> Space -> Int
+spacing :: RenderOptions -> Space -> Double
 spacing RenderOptions{..} space =
-    case (renderSpacing, space) of
-      (Proper _ , InterLetter) -> 5
-      (Regular  , InterLetter) -> 1
-      (_        , InterWord  ) -> 9
+    case (renderSpacing, renderXCompr, space) of
+      (Proper _ , False , InterLetter) -> 5
+      (Proper _ , True  , InterLetter) -> compression * 5
+      (Regular  , _     , InterLetter) -> 1
+      (_        , False , InterWord  ) -> 9
+      (_        , True  , InterWord  ) -> compression * 9
+  where
+    compression :: Double
+    compression = 3.1 / 5
 
 constructLine :: String -> Maybe Line
 constructLine = fmap (Line . onWords) . parseLine
@@ -85,7 +90,7 @@ computeOffsets opts@RenderOptions{..} (Line l) =
                              Regular  -> const 10
 
     onSpace :: Letter -> Space -> Letter -> State Double (WithOffset Space)
-    onSpace _ s _ = advanceBy (fromIntegral . spacing opts) s
+    onSpace _ s _ = advanceBy (spacing opts) s
 
     advanceBy :: (a -> Double) -> a -> State Double (WithOffset a)
     advanceBy f x = state $ \cursor -> (x `WithOffset` cursor, cursor + f x)
@@ -128,14 +133,14 @@ renderSpace opts@RenderOptions{..} s = mconcat [
       -- if renderGrid
       --  then gridOfWidth spaceWidth False
       --  else mempty
-      (alignBL $ rect (fromIntegral spaceWidth) 10)
+      (alignBL $ rect spaceWidth 10)
         # lw none
         # (case renderSpacing of
              Proper True -> fc (spaceColor s)
              _otherwise  -> id)
     ]
   where
-    spaceWidth :: Int
+    spaceWidth :: Double
     spaceWidth = spacing opts s
 
     spaceColor :: Space -> Colour Double

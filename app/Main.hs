@@ -5,7 +5,7 @@ import Data.Maybe (mapMaybe)
 import Options.Applicative
 
 import Diagrams.Backend.CmdLine
-import Diagrams.Backend.SVG.CmdLine
+import Diagrams.Backend.Cairo.CmdLine
 import Diagrams.Prelude
 
 import Trajans.RenderOptions

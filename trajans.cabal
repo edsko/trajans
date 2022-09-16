@@ -50,6 +50,6 @@ executable trajans
     , colour
     , containers
     , diagrams-lib
-    , diagrams-svg
+    , diagrams-cairo
     , mtl
     , optparse-applicative

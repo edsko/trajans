@@ -15,7 +15,7 @@ module Trajans.Letter (
   ) where
 
 import Data.Functor.Const
-import Diagrams.Backend.SVG
+import Diagrams.Backend.Cairo
 import Diagrams.Prelude hiding (Const(..), Empty, Start, End, arcLength)
 
 import Trajans.RenderOptions

@@ -1,6 +1,6 @@
 module Trajans.Grid (gridOfWidth) where
 
-import Diagrams.Backend.SVG
+import Diagrams.Backend.Cairo
 import Diagrams.Prelude hiding (width)
 
 import Trajans.Util.Diagrams
