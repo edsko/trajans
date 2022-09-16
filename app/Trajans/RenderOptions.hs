@@ -1,7 +1,6 @@
 module Trajans.RenderOptions (
     Alignment(..)
   , Thickness(..)
-  , Color(..)
   , Spacing(..)
   , RenderOptions(..)
     -- * Interpretation
@@ -14,7 +13,7 @@ import Data.Colour
 import Data.Colour.Names
 import Data.Foldable (asum)
 import Data.Maybe
-import Diagrams
+import Diagrams (Measure, thin, medium, thick)
 import Options.Applicative
 
 data Alignment =
@@ -48,6 +47,7 @@ data RenderOptions = RenderOptions {
     , renderBounds    :: Bool -- ^ Show letter bounds?
     , renderThickness :: Thickness
     , renderColour    :: Colour Double
+    , renderSlope     :: Double
     , renderDebug     :: Bool -- ^ For debugging the renderer
     }
   deriving (Show)
@@ -96,6 +96,13 @@ parseRenderOptions =
       <*> (optional' black $ option (readColourName =<< str) $ mconcat [
                long "colour"
              , help "Stroke colour"
+             ])
+      <*> (option auto $ mconcat [
+               long "slope"
+             , help "Slope of the letters"
+             , value 0
+             , metavar "DEG"
+             , showDefault
              ])
       <*> (switch $ mconcat [
                long "debug"

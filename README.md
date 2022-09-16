@@ -115,3 +115,14 @@ cabal run trajans -- --xcompr \
 
 ![](examples/compressed.png)
 
+Then, we can set a slope (in degrees):
+
+```
+cabal run trajans -- --slope 5 \
+  --xcompr \
+  -o examples/sloped.png \
+  -h 400 \
+  --text $'The quick\nbrown fox\njumps over\nthe lazy dog'
+```
+
+![](examples/sloped.png)

@@ -70,6 +70,9 @@ letterOpticalWidth opts l@Letter{..} =
     x, x' :: Double
     (x, x') = letterBounds (letterCompression opts l)
 
+-- | Shroke a letter
+--
+-- Shearing is not supported in debug mode.
 strokeLetter :: RenderOptions -> Letter -> Diagram B
 strokeLetter opts@RenderOptions{..} l@Letter{..} =
     rendered # translateX letterOffset
@@ -78,6 +81,10 @@ strokeLetter opts@RenderOptions{..} l@Letter{..} =
     rendered
       | renderDebug = debugStrokes strokes
       | otherwise   = strokePath $ Path (intStrokes strokes)
+                                     # shearX shearDistance
+
+    shearDistance :: Double
+    shearDistance = 1 / tan ((90 - renderSlope) * (pi/180))
 
     strokes :: Strokes f
     strokes = letterStrokes (letterCompression opts l)

@@ -46,7 +46,7 @@ spacing RenderOptions{..} space =
       (_        , True  , InterWord  ) -> compression * 9
   where
     compression :: Double
-    compression = 3.1 / 5
+    compression = 3.5 / 5
 
 constructLine :: String -> Maybe Line
 constructLine = fmap (Line . onWords) . parseLine
