@@ -1,3 +1,4 @@
 dist-newstyle/
 *.svg
 .envrc
+.DS_Store

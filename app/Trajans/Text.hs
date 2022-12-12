@@ -155,9 +155,11 @@ renderSpace opts@RenderOptions{..} s = mconcat [
 -- o Otherwise, the origin will be the bottom left of the grid.
 renderLetter :: RenderOptions -> Letter -> Diagram B
 renderLetter opts@RenderOptions{..} l@Letter{..} = mconcat [
-      strokeLetter opts l
-        # lw (intThickness renderThickness)
-        # lc renderColour
+      if renderNoLetters
+        then mempty
+        else strokeLetter opts l
+               # lw (intThickness renderThickness)
+               # lc renderColour
     , if renderGrid
         then gridOfWidth 10 True
         else mempty

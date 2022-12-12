@@ -49,6 +49,7 @@ data RenderOptions = RenderOptions {
     , renderColour    :: Colour Double
     , renderSlope     :: Double
     , renderUpwards   :: Double
+    , renderNoLetters :: Bool
     , renderDebug     :: Bool -- ^ For debugging the renderer
     }
   deriving (Show)
@@ -111,6 +112,10 @@ parseRenderOptions =
              , value 0
              , metavar "DEG"
              , showDefault
+             ])
+      <*> (switch $ mconcat [
+               long "no-letters"
+             , help "Render everything except the letters (useful for guidelines)"
              ])
       <*> (switch $ mconcat [
                long "debug"
