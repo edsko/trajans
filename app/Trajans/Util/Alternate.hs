@@ -31,6 +31,9 @@ data Alternate a b =
   | AltCons a b (Alternate a b)
   deriving (Show)
 
+instance Functor (Alternate a) where
+  fmap = second
+
 instance Bifunctor Alternate where
   bimap :: forall a a' b b'.
        (a -> a')
