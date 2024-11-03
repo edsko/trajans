@@ -1,7 +1,5 @@
 module Main (main) where
 
-import Data.Char (toUpper)
-import Data.Maybe (mapMaybe)
 import Options.Applicative
 
 import Diagrams.Backend.CmdLine
@@ -38,14 +36,16 @@ instance Parseable RenderCommand where
 -------------------------------------------------------------------------------}
 
 renderText :: RenderOptions -> String -> Diagram B
-renderText opts =
-      mconcat
-    . map (uncurry translateY)
-    . zip [0, 0 - interLineSpacing ..]
-    . map (renderLine opts)
-    . mapMaybe constructLine
-    . lines
-    . map toUpper
+renderText opts input =
+    case mapM constructLine (lines input) of
+      Left (Error err) ->
+        error $ "Error: " ++ err
+      Right parsed ->
+          mconcat
+        . map (uncurry translateY)
+        . zip [0, 0 - interLineSpacing ..]
+        . map (renderLine opts)
+        $ parsed
   where
     interLineSpacing :: Double
     interLineSpacing = 13

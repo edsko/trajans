@@ -3,6 +3,7 @@ module Trajans.Text (
   , Space(..)
   , Alignment(..)
   , RenderOptions(..)
+  , Error(..)
   , constructLine
   , renderLine
   , renderLetter
@@ -11,8 +12,8 @@ module Trajans.Text (
 import Prelude hiding (Word)
 
 import Control.Monad.State
+import Data.Char (toUpper)
 import Data.List.NonEmpty (NonEmpty(..))
-import Data.List.NonEmpty qualified as NE
 
 import Diagrams.Prelude hiding (Line)
 import Diagrams.Backend.Cairo
@@ -48,7 +49,7 @@ spacing RenderOptions{..} space =
     compression :: Double
     compression = 3.5 / 5
 
-constructLine :: String -> Maybe Line
+constructLine :: String -> Either Error Line
 constructLine = fmap (Line . onWords) . parseLine
   where
     onWords :: NonEmpty Word -> Alternate Letter Space
@@ -189,14 +190,26 @@ renderLetter opts@RenderOptions{..} l@Letter{..} = mconcat [
 
 newtype Word = Word (NonEmpty Letter)
 
-parseLine :: String -> Maybe (NonEmpty Word)
-parseLine = (>>= NE.nonEmpty) . mapM parseWord . words
+newtype Error = Error String
 
-parseWord :: String -> Maybe Word
-parseWord []     = Nothing
+parseLine :: String -> Either Error (NonEmpty Word)
+parseLine = (>>= toNonEmpty) . mapM parseWord . words
+  where
+    toNonEmpty :: [Word] -> Either Error (NonEmpty Word)
+    toNonEmpty []     = Left $ Error "No words"
+    toNonEmpty (w:ws) = Right $ w :| ws
+
+parseWord :: String -> Either Error Word
+parseWord []     = Left $ Error "Empty word"
 parseWord (x:xs) = Word <$> traverse aux (x :| xs)
   where
-    aux :: Char -> Maybe Letter
-    aux c | c >= 'A' && c <= 'Z' = Just $ trajan c
-          | otherwise            = Nothing
+    aux :: Char -> Either Error Letter
+    aux c'
+      | c >= 'A' && c <= 'Z'
+      = Right $ trajan c
+
+      | otherwise
+      = Left $ Error ("Unexpected character '" ++ [c'] ++ "'")
+      where
+        c = toUpper c'
 
